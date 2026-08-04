@@ -1,0 +1,6 @@
+{
+  "name": "SIKOMDIG Desa Cibunian",
+  "description": "Sistem Informasi Komposter Digital Desa Cibunian - Pengelolaan sampah organik, pupuk kompos, pupuk cair POC, dan budidaya maggot BSF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

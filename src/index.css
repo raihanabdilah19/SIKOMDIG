@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@layer utilities {
+  /* Scrolling Marquee Animation */
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+}
+
+/* Custom modern scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Theme level background adjustments */
+.nature-theme-active {
+  --bg-primary: #f4f7f5;
+  background-color: var(--bg-primary);
+}
+
+.dark-theme-active {
+  --bg-primary: #0A0A0B;
+  --bg-sidebar: #0D0D10;
+  --bg-header: #0F0F12;
+  --bg-card: #131318;
+  --bg-panel: #181820;
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --color-text-main: #E5E7EB;
+  --color-text-sub: #9CA3AF;
+  --color-text-muted: #6B7280;
+  --color-accent-indigo: #6366f1;
+
+  background-color: var(--bg-primary) !important;
+  color: var(--color-text-main) !important;
+}
+
+/* Scrollbars for dark mode */
+.dark-theme-active ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+.dark-theme-active ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Sidebar & Header mappings */
+.dark-theme-active aside,
+.dark-theme-active .bg-slate-900 {
+  background-color: var(--bg-sidebar) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+.dark-theme-active header {
+  background-color: rgba(15, 15, 18, 0.85) !important;
+  border-color: var(--border-subtle) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Cards & containers mappings */
+.dark-theme-active .bg-white {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--color-text-main) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme-active .bg-slate-50,
+.dark-theme-active .bg-slate-50\/50,
+.dark-theme-active .bg-slate-100 {
+  background-color: var(--bg-panel) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+/* Borders override */
+.dark-theme-active .border-slate-50,
+.dark-theme-active .border-slate-100,
+.dark-theme-active .border-slate-150,
+.dark-theme-active .border-slate-200 {
+  border-color: var(--border-subtle) !important;
+}
+
+/* Typography elements */
+.dark-theme-active .text-slate-800,
+.dark-theme-active .text-slate-700 {
+  color: var(--color-text-main) !important;
+}
+
+.dark-theme-active .text-slate-600,
+.dark-theme-active .text-slate-500 {
+  color: var(--color-text-sub) !important;
+}
+
+.dark-theme-active .text-slate-400 {
+  color: var(--color-text-muted) !important;
+}
+
+/* Inputs override */
+.dark-theme-active input,
+.dark-theme-active select,
+.dark-theme-active textarea {
+  background-color: var(--bg-panel) !important;
+  border-color: var(--border-medium) !important;
+  color: #ffffff !important;
+}
+.dark-theme-active input:focus,
+.dark-theme-active select:focus,
+.dark-theme-active textarea:focus {
+  border-color: var(--color-accent-indigo) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Standard buttons override to premium indigo-purple gradients */
+.dark-theme-active .bg-green-600 {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.25) !important;
+  border-color: transparent !important;
+}
+.dark-theme-active .bg-green-600:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%) !important;
+}
+
+.dark-theme-active .hover\:bg-green-700:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%) !important;
+}
+
+/* Text status colors & badges */
+.dark-theme-active .text-green-600,
+.dark-theme-active .text-emerald-600 {
+  color: #818cf8 !important; /* Elegant light indigo */
+}
+.dark-theme-active .text-green-500,
+.dark-theme-active .text-emerald-500 {
+  color: #a5b4fc !important;
+}
+.dark-theme-active .text-green-400,
+.dark-theme-active .text-green-300 {
+  color: #c7d2fe !important;
+}
+.dark-theme-active .text-green-200 {
+  color: #e0e7ff !important;
+}
+
+.dark-theme-active .bg-green-50,
+.dark-theme-active .bg-emerald-50,
+.dark-theme-active .bg-green-100,
+.dark-theme-active .bg-emerald-100 {
+  background-color: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.2) !important;
+  color: #818cf8 !important;
+}
+
+/* Soft hover overrides */
+.dark-theme-active .hover\:bg-slate-50:hover,
+.dark-theme-active .hover\:bg-slate-100:hover,
+.dark-theme-active .hover\:bg-slate-50\/50:hover {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark-theme-active tr:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Animations spin-slow */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
