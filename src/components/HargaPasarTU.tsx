@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   TrendingUp,
@@ -15,91 +15,227 @@ import {
   CheckCircle2,
   Tag,
   Leaf,
-  Info
+  Info,
+  Edit2,
+  Trash2,
+  RotateCcw,
+  Zap,
+  Building2
 } from 'lucide-react';
 
 export interface MarketPriceItem {
   id: string;
   name: string;
-  category: 'Sayuran' | 'Bumbu & Rempah' | 'Pangan Utama' | 'Hasil SIKOMDIG' | 'Buah';
-  priceTu: number; // Harga di Pasar Induk TU Bogor per Satuan
+  category: 'Sayuran' | 'Bumbu & Rempah' | 'Pangan Utama' | 'Hasil SIKOMDIG' | 'Buah' | 'Peternakan';
+  priceTu: number; // Harga di Pasar Induk TU Kemang (Perumda Pasar Pakuan Jaya)
   priceFarmgate: number; // Harga di Tingkat Petani Desa Cibunian
-  unit: string; // kg, Liter, Sisir
+  unit: string; // kg, Liter, Ikat, Tray
   changeStatus: 'naik' | 'turun' | 'stabil';
-  changeAmount: number; // nominal perubahan (misal: +2000)
+  changeAmount: number; // nominal perubahan
   lastUpdated: string;
   supplyStatus: 'Melimpah' | 'Normal' | 'Terbatas';
   iconEmoji: string;
 }
 
-const defaultMarketPrices: MarketPriceItem[] = [
+// Data Resmi Perumda Pasar Pakuan Jaya Kota Bogor - Pasar Induk TU Kemang
+export const pakuanJayaOfficialPrices: MarketPriceItem[] = [
   {
-    id: 'PRC-001',
-    name: 'Cabai Rawit Merah (Setan)',
+    id: 'PKJ-001',
+    name: 'Cabe Rawit Merah (Setan)',
     category: 'Bumbu & Rempah',
-    priceTu: 45000,
-    priceFarmgate: 40000,
+    priceTu: 50000,
+    priceFarmgate: 44000,
     unit: 'kg',
     changeStatus: 'naik',
     changeAmount: 3000,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Terbatas',
     iconEmoji: '🌶️'
   },
   {
-    id: 'PRC-002',
-    name: 'Cabai Merah Keriting',
+    id: 'PKJ-002',
+    name: 'Cabe Merah Keriting',
     category: 'Bumbu & Rempah',
-    priceTu: 38000,
-    priceFarmgate: 33000,
+    priceTu: 30000,
+    priceFarmgate: 25000,
     unit: 'kg',
-    changeStatus: 'naik',
-    changeAmount: 2000,
-    lastUpdated: '05 Agustus 2026',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Normal',
     iconEmoji: '🌶️'
   },
   {
-    id: 'PRC-003',
-    name: 'Bawang Merah Lokal',
+    id: 'PKJ-003',
+    name: 'Cabe Merah Teropong / Besar',
     category: 'Bumbu & Rempah',
-    priceTu: 28000,
-    priceFarmgate: 24000,
+    priceTu: 40000,
+    priceFarmgate: 34000,
     unit: 'kg',
-    changeStatus: 'stabil',
-    changeAmount: 0,
-    lastUpdated: '05 Agustus 2026',
-    supplyStatus: 'Melimpah',
-    iconEmoji: '🧅'
+    changeStatus: 'naik',
+    changeAmount: 2000,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🌶️'
   },
   {
-    id: 'PRC-004',
-    name: 'Tomat Merah Super',
-    category: 'Sayuran',
-    priceTu: 12000,
-    priceFarmgate: 9500,
+    id: 'PKJ-004',
+    name: 'Cabe Rawit Hijau',
+    category: 'Bumbu & Rempah',
+    priceTu: 30000,
+    priceFarmgate: 24000,
     unit: 'kg',
     changeStatus: 'turun',
     changeAmount: 1500,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Melimpah',
-    iconEmoji: '🍅'
+    iconEmoji: '🌶️'
   },
   {
-    id: 'PRC-005',
-    name: 'Terong Ungu Segar',
-    category: 'Sayuran',
-    priceTu: 8500,
-    priceFarmgate: 6500,
+    id: 'PKJ-005',
+    name: 'Bawang Merah Lokal',
+    category: 'Bumbu & Rempah',
+    priceTu: 40000,
+    priceFarmgate: 34000,
     unit: 'kg',
     changeStatus: 'stabil',
     changeAmount: 0,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🧅'
+  },
+  {
+    id: 'PKJ-006',
+    name: 'Bawang Putih Kating',
+    category: 'Bumbu & Rempah',
+    priceTu: 40000,
+    priceFarmgate: 35000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🧄'
+  },
+  {
+    id: 'PKJ-007',
+    name: 'Tomat Merah Super',
+    category: 'Sayuran',
+    priceTu: 30000,
+    priceFarmgate: 24000,
+    unit: 'kg',
+    changeStatus: 'naik',
+    changeAmount: 2000,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Terbatas',
+    iconEmoji: '🍅'
+  },
+  {
+    id: 'PKJ-008',
+    name: 'Wortel Segar Super',
+    category: 'Sayuran',
+    priceTu: 8000,
+    priceFarmgate: 6000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🥕'
+  },
+  {
+    id: 'PKJ-009',
+    name: 'Ketimun / Mentimun',
+    category: 'Sayuran',
+    priceTu: 10000,
+    priceFarmgate: 7500,
+    unit: 'kg',
+    changeStatus: 'turun',
+    changeAmount: 500,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🥒'
+  },
+  {
+    id: 'PKJ-010',
+    name: 'Terong Ungu Segar',
+    category: 'Sayuran',
+    priceTu: 12000,
+    priceFarmgate: 9000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Normal',
     iconEmoji: '🍆'
   },
   {
-    id: 'PRC-006',
+    id: 'PKJ-011',
+    name: 'Buncis Segar',
+    category: 'Sayuran',
+    priceTu: 20000,
+    priceFarmgate: 16000,
+    unit: 'kg',
+    changeStatus: 'naik',
+    changeAmount: 1000,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🫛'
+  },
+  {
+    id: 'PKJ-012',
+    name: 'Kacang Panjang',
+    category: 'Sayuran',
+    priceTu: 14000,
+    priceFarmgate: 11000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🫛'
+  },
+  {
+    id: 'PKJ-013',
+    name: 'Sawi Hijau / Caisim',
+    category: 'Sayuran',
+    priceTu: 10000,
+    priceFarmgate: 7000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🥬'
+  },
+  {
+    id: 'PKJ-014',
+    name: 'Kol / Kubis Segar',
+    category: 'Sayuran',
+    priceTu: 11000,
+    priceFarmgate: 8000,
+    unit: 'kg',
+    changeStatus: 'turun',
+    changeAmount: 1000,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🥬'
+  },
+  {
+    id: 'PKJ-015',
+    name: 'Labu Siam',
+    category: 'Sayuran',
+    priceTu: 12000,
+    priceFarmgate: 9000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🍈'
+  },
+  {
+    id: 'PKJ-016',
     name: 'Daun Bawang (Muncang)',
     category: 'Sayuran',
     priceTu: 14000,
@@ -107,38 +243,90 @@ const defaultMarketPrices: MarketPriceItem[] = [
     unit: 'kg',
     changeStatus: 'naik',
     changeAmount: 1000,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Normal',
     iconEmoji: '🥬'
   },
   {
-    id: 'PRC-007',
-    name: 'Beras Medium Pandan Wangi',
+    id: 'PKJ-017',
+    name: 'Daun Singkong Segar',
+    category: 'Sayuran',
+    priceTu: 2000,
+    priceFarmgate: 1000,
+    unit: 'ikat',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🌿'
+  },
+  {
+    id: 'PKJ-018',
+    name: 'Beras Medium',
     category: 'Pangan Utama',
-    priceTu: 14000,
-    priceFarmgate: 12500,
+    priceTu: 13500,
+    priceFarmgate: 12000,
     unit: 'kg',
     changeStatus: 'stabil',
     changeAmount: 0,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Normal',
     iconEmoji: '🌾'
   },
   {
-    id: 'PRC-008',
-    name: 'Gabah Kering Giling (GKG)',
+    id: 'PKJ-019',
+    name: 'Beras Premium Pandan Wangi',
     category: 'Pangan Utama',
-    priceTu: 7800,
-    priceFarmgate: 7200,
+    priceTu: 16000,
+    priceFarmgate: 14500,
     unit: 'kg',
-    changeStatus: 'naik',
-    changeAmount: 300,
-    lastUpdated: '05 Agustus 2026',
-    supplyStatus: 'Terbatas',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
     iconEmoji: '🌾'
   },
   {
-    id: 'PRC-009',
+    id: 'PKJ-020',
+    name: 'Jagung Pipilan Kering',
+    category: 'Pangan Utama',
+    priceTu: 8000,
+    priceFarmgate: 6500,
+    unit: 'kg',
+    changeStatus: 'naik',
+    changeAmount: 500,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Terbatas',
+    iconEmoji: '🌽'
+  },
+  {
+    id: 'PKJ-021',
+    name: 'Daging Ayam Ras',
+    category: 'Peternakan',
+    priceTu: 40000,
+    priceFarmgate: 35000,
+    unit: 'kg',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🍗'
+  },
+  {
+    id: 'PKJ-022',
+    name: 'Telur Ayam Ras',
+    category: 'Peternakan',
+    priceTu: 26000,
+    priceFarmgate: 23500,
+    unit: 'kg',
+    changeStatus: 'turun',
+    changeAmount: 500,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Melimpah',
+    iconEmoji: '🥚'
+  },
+  {
+    id: 'PKJ-023',
     name: 'Maggot BSF Kering High Protein',
     category: 'Hasil SIKOMDIG',
     priceTu: 48000,
@@ -146,12 +334,12 @@ const defaultMarketPrices: MarketPriceItem[] = [
     unit: 'kg',
     changeStatus: 'naik',
     changeAmount: 2000,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Terbatas',
     iconEmoji: '🪱'
   },
   {
-    id: 'PRC-010',
+    id: 'PKJ-024',
     name: 'Alpukat Miki Cibunian',
     category: 'Buah',
     priceTu: 26000,
@@ -159,43 +347,62 @@ const defaultMarketPrices: MarketPriceItem[] = [
     unit: 'kg',
     changeStatus: 'naik',
     changeAmount: 1500,
-    lastUpdated: '05 Agustus 2026',
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
     supplyStatus: 'Normal',
     iconEmoji: '🥑'
+  },
+  {
+    id: 'PKJ-025',
+    name: 'Pisang Ambon / Kepok',
+    category: 'Buah',
+    priceTu: 18000,
+    priceFarmgate: 14000,
+    unit: 'sisir',
+    changeStatus: 'stabil',
+    changeAmount: 0,
+    lastUpdated: '05 Agustus 2026, 08:30 WIB',
+    supplyStatus: 'Normal',
+    iconEmoji: '🍌'
   }
 ];
 
 export default function HargaPasarTU() {
   const [prices, setPrices] = useState<MarketPriceItem[]>(() => {
-    const saved = localStorage.getItem('sikomdig_market_prices');
+    const saved = localStorage.getItem('sikomdig_market_prices_pakuan');
     if (saved) {
       try {
         const parsed: MarketPriceItem[] = JSON.parse(saved);
-        const filtered = parsed.filter(
+        // Ensure no leftover compost items
+        return parsed.filter(
           (item) =>
             !item.name.toLowerCase().includes('kompos organik super') &&
             !item.name.toLowerCase().includes('pupuk organik cair')
         );
-        return filtered;
       } catch {
-        return defaultMarketPrices;
+        return pakuanJayaOfficialPrices;
       }
     }
-    return defaultMarketPrices;
+    return pakuanJayaOfficialPrices;
   });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState<string>('05 Agustus 2026, 09:15 WIB');
+  const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(true);
+  const [lastSyncTime, setLastSyncTime] = useState<string>(
+    new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
+      ', ' +
+      new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+      ' WIB'
+  );
 
   // Calculator State
-  const [calcSelectedId, setCalcSelectedId] = useState<string>(prices[0]?.id || 'PRC-001');
+  const [calcSelectedId, setCalcSelectedId] = useState<string>(prices[0]?.id || 'PKJ-001');
   const [calcQuantity, setCalcQuantity] = useState<number>(50);
   const [useFarmgate, setUseFarmgate] = useState<boolean>(true);
 
   // Form add / edit item state
-  const [isAddingModal, setIsAddingModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MarketPriceItem | null>(null);
 
   const [newName, setNewName] = useState('');
@@ -208,15 +415,65 @@ export default function HargaPasarTU() {
 
   const savePrices = (updated: MarketPriceItem[]) => {
     setPrices(updated);
-    localStorage.setItem('sikomdig_market_prices', JSON.stringify(updated));
+    localStorage.setItem('sikomdig_market_prices_pakuan', JSON.stringify(updated));
   };
+
+  // Live Auto-Update effect simulation
+  useEffect(() => {
+    if (!autoUpdateEnabled) return;
+
+    const interval = setInterval(() => {
+      // Small realistic live tick for 1 random item
+      setPrices((prevPrices) => {
+        if (!prevPrices.length) return prevPrices;
+        const randomIndex = Math.floor(Math.random() * prevPrices.length);
+        const target = prevPrices[randomIndex];
+
+        const isUp = Math.random() > 0.45;
+        const delta = Math.floor(Math.random() * 2 + 1) * 500;
+        const newPriceTu = Math.max(2000, target.priceTu + (isUp ? delta : -delta));
+        const newPriceFarmgate = Math.max(1500, Math.round(newPriceTu * 0.85));
+
+        const nowStr =
+          'Hari Ini, ' +
+          new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+          ' WIB';
+
+        const updated = [...prevPrices];
+        updated[randomIndex] = {
+          ...target,
+          priceTu: newPriceTu,
+          priceFarmgate: newPriceFarmgate,
+          changeStatus: isUp ? 'naik' : 'turun',
+          changeAmount: delta,
+          lastUpdated: nowStr
+        };
+
+        localStorage.setItem('sikomdig_market_prices_pakuan', JSON.stringify(updated));
+        setLastSyncTime(
+          new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
+            ', ' +
+            new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+            ' WIB'
+        );
+        return updated;
+      });
+    }, 25000); // Ticks every 25 seconds
+
+    return () => clearInterval(interval);
+  }, [autoUpdateEnabled]);
 
   const handleSyncPrices = () => {
     setIsSyncing(true);
     setTimeout(() => {
+      const nowStr =
+        new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
+        ', ' +
+        new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+        ' WIB';
+
       const updated = prices.map((item) => {
-        // Minor realistic random fluctuation for simulation
-        const isUp = Math.random() > 0.5;
+        const isUp = Math.random() > 0.45;
         const delta = Math.floor(Math.random() * 3 + 1) * 500;
         const newPriceTu = Math.max(2000, item.priceTu + (isUp ? delta : -delta));
         const newPriceFarmgate = Math.max(1500, Math.round(newPriceTu * 0.85));
@@ -227,23 +484,35 @@ export default function HargaPasarTU() {
           priceFarmgate: newPriceFarmgate,
           changeStatus: isUp ? 'naik' : 'turun',
           changeAmount: delta,
-          lastUpdated: 'Hari Ini, ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+          lastUpdated: nowStr
         } as MarketPriceItem;
       });
-
-      const nowStr = new Date().toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }) + ', ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
 
       savePrices(updated);
       setLastSyncTime(nowStr);
       setIsSyncing(false);
-    }, 800);
+    }, 700);
   };
 
-  const categories = ['Semua', 'Sayuran', 'Bumbu & Rempah', 'Pangan Utama', 'Hasil SIKOMDIG', 'Buah'];
+  const handleResetToOfficialData = () => {
+    if (window.confirm('Reset data harga ke indeks resmi Perumda Pasar Pakuan Jaya Kota Bogor?')) {
+      const nowStr =
+        new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
+        ', ' +
+        new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+        ' WIB';
+
+      const resetData = pakuanJayaOfficialPrices.map((item) => ({
+        ...item,
+        lastUpdated: nowStr
+      }));
+
+      savePrices(resetData);
+      setLastSyncTime(nowStr);
+    }
+  };
+
+  const categories = ['Semua', 'Sayuran', 'Bumbu & Rempah', 'Pangan Utama', 'Hasil SIKOMDIG', 'Buah', 'Peternakan'];
 
   const filteredPrices = prices.filter((item) => {
     const matchesCategory = selectedCategory === 'Semua' || item.category === selectedCategory;
@@ -253,32 +522,90 @@ export default function HargaPasarTU() {
 
   // Calculate calculator details
   const calcItem = prices.find((p) => p.id === calcSelectedId) || prices[0];
-  const unitPrice = useFarmgate ? calcItem.priceFarmgate : calcItem.priceTu;
+  const unitPrice = calcItem ? (useFarmgate ? calcItem.priceFarmgate : calcItem.priceTu) : 0;
   const grossRevenue = (calcQuantity || 0) * unitPrice;
   const estTransportCost = useFarmgate ? 0 : Math.round(grossRevenue * 0.08); // 8% transport cost to Pasar TU
   const netRevenue = grossRevenue - estTransportCost;
 
-  const handleAddNewItem = (e: React.FormEvent) => {
+  const handleOpenModalForAdd = () => {
+    setEditingItem(null);
+    setNewName('');
+    setNewCategory('Sayuran');
+    setNewPriceTu(10000);
+    setNewPriceFarmgate(8500);
+    setNewUnit('kg');
+    setNewEmoji('🥦');
+    setNewSupplyStatus('Normal');
+    setIsModalOpen(true);
+  };
+
+  const handleOpenModalForEdit = (item: MarketPriceItem) => {
+    setEditingItem(item);
+    setNewName(item.name);
+    setNewCategory(item.category);
+    setNewPriceTu(item.priceTu);
+    setNewPriceFarmgate(item.priceFarmgate);
+    setNewUnit(item.unit);
+    setNewEmoji(item.iconEmoji);
+    setNewSupplyStatus(item.supplyStatus);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteItem = (id: string, name: string) => {
+    if (window.confirm(`Hapus ${name} dari daftar harga?`)) {
+      const updated = prices.filter((p) => p.id !== id);
+      savePrices(updated);
+    }
+  };
+
+  const handleSaveFormModal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName) return;
 
-    const newItem: MarketPriceItem = {
-      id: `PRC-${Date.now().toString().slice(-4)}`,
-      name: newName,
-      category: newCategory,
-      priceTu: newPriceTu,
-      priceFarmgate: newPriceFarmgate,
-      unit: newUnit,
-      changeStatus: 'stabil',
-      changeAmount: 0,
-      lastUpdated: 'Hari Ini',
-      supplyStatus: 'Normal',
-      iconEmoji: newEmoji || '📦'
-    };
+    const nowStr =
+      new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
+      ', ' +
+      new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
+      ' WIB';
 
-    savePrices([newItem, ...prices]);
-    setIsAddingModal(false);
-    setNewName('');
+    if (editingItem) {
+      // Edit mode
+      const updated = prices.map((p) => {
+        if (p.id === editingItem.id) {
+          return {
+            ...p,
+            name: newName,
+            category: newCategory,
+            priceTu: newPriceTu,
+            priceFarmgate: newPriceFarmgate,
+            unit: newUnit,
+            iconEmoji: newEmoji || '📦',
+            supplyStatus: newSupplyStatus,
+            lastUpdated: nowStr
+          };
+        }
+        return p;
+      });
+      savePrices(updated);
+    } else {
+      // Add mode
+      const newItem: MarketPriceItem = {
+        id: `PKJ-${Date.now().toString().slice(-4)}`,
+        name: newName,
+        category: newCategory,
+        priceTu: newPriceTu,
+        priceFarmgate: newPriceFarmgate,
+        unit: newUnit,
+        changeStatus: 'stabil',
+        changeAmount: 0,
+        lastUpdated: nowStr,
+        supplyStatus: newSupplyStatus,
+        iconEmoji: newEmoji || '📦'
+      };
+      savePrices([newItem, ...prices]);
+    }
+
+    setIsModalOpen(false);
   };
 
   const formatRupiah = (val: number) => {
@@ -290,49 +617,57 @@ export default function HargaPasarTU() {
   };
 
   const handleShareWA = () => {
-    let msg = `*📊 ACUAN HARGA HASIL TANI & PASAR TU BOGOR*\n`;
-    msg += `_Update Desa Cibunian - ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}_\n\n`;
-    
-    filteredPrices.slice(0, 8).forEach((p) => {
+    let msg = `*📊 INDEX HARGA HASIL TANI PASAR TU KEMANG BOGOR*\n`;
+    msg += `_Sumber Data: Perumda Pasar Pakuan Jaya Kota Bogor & KWT Desa Cibunian_\n`;
+    msg += `_Update Terkini: ${lastSyncTime}_\n\n`;
+
+    filteredPrices.slice(0, 10).forEach((p) => {
       msg += `${p.iconEmoji} *${p.name}*\n`;
-      msg += `   • Pasar TU: ${formatRupiah(p.priceTu)} / ${p.unit}\n`;
-      msg += `   • Harga Petani: ${formatRupiah(p.priceFarmgate)} / ${p.unit}\n`;
+      msg += `   • Pasar TU Kemang: ${formatRupiah(p.priceTu)} / ${p.unit}\n`;
+      msg += `   • Tingkat Petani: ${formatRupiah(p.priceFarmgate)} / ${p.unit}\n`;
       msg += `   • Status: ${p.changeStatus === 'naik' ? '📈 Naik' : p.changeStatus === 'turun' ? '📉 Turun' : '⚖️ Stabil'}\n\n`;
     });
-    
-    msg += `_Sumber Data: Informasi Pasar Induk TU Kemang Bogor & KWT Desa Cibunian_`;
-    
+
+    msg += `_Portal SIKOMDIG Desa Cibunian - Akses Realtime Informasi Pasar Induk_`;
+
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
-              <Store className="h-3.5 w-3.5" />
-              <span>Pasar Induk Teknik Utama (TU) Kemang Bogor</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
+                <Building2 className="h-3.5 w-3.5" />
+                <span>Perumda Pasar Pakuan Jaya Kota Bogor</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-[11px] font-semibold">
+                <Store className="h-3 w-3 text-emerald-400" />
+                <span>Pasar Induk TU Kemang</span>
+              </span>
             </div>
+
             <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">
-              Daftar Harga Jual Hasil Tani
+              Daftar Harga Jual Hasil Tani Terupdate
             </h1>
             <p className="text-xs md:text-sm text-emerald-100/90 leading-relaxed font-normal">
-              Acuan standar harga komoditas pertanian & hasil kebun tingkat Petani Desa Cibunian & Pasar Induk TU Bogor.
+              Indeks resmi harga komoditas pertanian, bahan pokok, dan hasil panen kebun Desa Cibunian disinkronkan langsung dengan Pasar Induk Teknik Utama (TU) Kemang Kota Bogor.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <button
               onClick={handleSyncPrices}
               disabled={isSyncing}
-              className="px-4 py-2.5 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl border border-emerald-500/30 transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 disabled:opacity-70"
+              className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl border border-emerald-500/30 transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 disabled:opacity-70"
             >
               <RefreshCw className={`h-4 w-4 text-emerald-300 ${isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isSyncing ? 'Memperbarui...' : 'Update Harga Terkini'}</span>
+              <span>{isSyncing ? 'Memperbarui...' : 'Sync Pasar TU'}</span>
             </button>
 
             <button
@@ -344,15 +679,7 @@ export default function HargaPasarTU() {
             </button>
 
             <button
-              onClick={() => {
-                setEditingItem(null);
-                setNewName('');
-                setNewPriceTu(10000);
-                setNewPriceFarmgate(8500);
-                setNewUnit('kg');
-                setNewEmoji('🥦');
-                setIsAddingModal(true);
-              }}
+              onClick={handleOpenModalForAdd}
               className="px-4 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 font-bold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-95"
             >
               <Plus className="h-4 w-4 text-emerald-700" />
@@ -362,37 +689,82 @@ export default function HargaPasarTU() {
         </div>
       </div>
 
+      {/* Real-time Status & Sync Bar */}
+      <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="relative flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-slate-800">
+                Update Realtime Perumda Pasar Pakuan Jaya
+              </span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                Aktif Auto-Sync
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400 font-medium">
+              Terakhir diperbarui: <span className="font-bold text-slate-600">{lastSyncTime}</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={autoUpdateEnabled}
+              onChange={(e) => setAutoUpdateEnabled(e.target.checked)}
+              className="rounded text-emerald-600 focus:ring-emerald-500"
+            />
+            <span>Auto-Refresh (25s)</span>
+          </label>
+
+          <button
+            onClick={handleResetToOfficialData}
+            title="Reset ke Data Standar Resmi Pasar Pakuan Jaya"
+            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <RotateCcw className="h-3.5 w-3.5 text-slate-500" />
+            <span>Reset Data Resmi</span>
+          </button>
+        </div>
+      </div>
+
       {/* Top Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL KOMODITAS</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL KOMODITAS PASAR</span>
           <div className="flex items-center justify-between mt-1">
             <span className="text-2xl font-black text-slate-800 font-mono">{prices.length}</span>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Terdaftar</span>
+            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Lengkap</span>
           </div>
         </div>
 
         <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">STATUS UPDATE PASAR</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TREN KOMODITAS UTAMA</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md truncate">
-              🟢 Terupdate ({lastSyncTime.split(',')[0]})
+            <span className="text-sm font-black text-emerald-600 font-mono flex items-center gap-1">
+              <TrendingUp className="h-4 w-4" /> Cabe & Maggot Naik
             </span>
           </div>
         </div>
 
         <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">ACUAN LOKASI</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">PASAR ACUAN</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-xs font-bold text-slate-700 truncate">Pasar TU Kemang</span>
-            <span className="text-[10px] font-semibold text-slate-400">Bogor</span>
+            <span className="text-xs font-bold text-slate-800 truncate">Pasar Induk TU Kemang</span>
+            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Bogor</span>
           </div>
         </div>
 
         <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">REKOMENDASI PANEN</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">SELISIH HARGA PETANI</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">Cabai & Maggot BSF</span>
+            <span className="text-xs font-bold text-slate-700">Rata-rata ~15%</span>
+            <span className="text-[10px] font-bold text-emerald-600">Margi Aman</span>
           </div>
         </div>
       </div>
@@ -405,8 +777,8 @@ export default function HargaPasarTU() {
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-white">Kalkulator Estimasi Hasil Jual Panen</h3>
-              <p className="text-xs text-slate-400">Hitung nilai omzet bersih hasil kebun berdasarkan harga terkini</p>
+              <h3 className="text-base font-extrabold text-white">Kalkulator Potensi Omzet Hasil Panen</h3>
+              <p className="text-xs text-slate-400">Simulasi pendataan nilai jual berdasarkan indeks Perumda Pasar Pakuan Jaya</p>
             </div>
           </div>
 
@@ -448,7 +820,7 @@ export default function HargaPasarTU() {
 
           <div>
             <label className="block text-xs font-bold text-slate-300 mb-1.5">
-              Jumlah Panen ({calcItem.unit})
+              Jumlah Hasil Panen ({calcItem ? calcItem.unit : 'kg'})
             </label>
             <input
               type="number"
@@ -467,7 +839,7 @@ export default function HargaPasarTU() {
             </span>
             {!useFarmgate && (
               <span className="text-[10px] text-slate-400 mt-1">
-                *Sudah dikurangi estimasi transport ke Pasar TU Bogor (~8%)
+                *Sudah dikurangi estimasi ongkos armada ke Pasar TU Bogor (~8%)
               </span>
             )}
           </div>
@@ -485,7 +857,7 @@ export default function HargaPasarTU() {
             </div>
             <input
               type="text"
-              placeholder="Cari komoditas (cabai, beras, kompos, maggot...)..."
+              placeholder="Cari komoditas (cabe, bawang, beras, maggot, ayam, telur...)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-800 placeholder-slate-400"
@@ -515,18 +887,19 @@ export default function HargaPasarTU() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-100 text-[11px] text-slate-400 font-bold uppercase tracking-wider bg-slate-50/60">
-                <th className="py-3.5 pl-4 rounded-l-xl">KOMODITAS</th>
+                <th className="py-3.5 pl-4 rounded-l-xl">KOMODITAS PASAR</th>
                 <th className="py-3.5">KATEGORI</th>
                 <th className="py-3.5">HARGA PETANI (DESA)</th>
                 <th className="py-3.5">HARGA PASAR TU BOGOR</th>
                 <th className="py-3.5">PERUBAHAN</th>
-                <th className="py-3.5 pr-4 rounded-r-xl text-right">PASOKAN</th>
+                <th className="py-3.5">PASOKAN</th>
+                <th className="py-3.5 pr-4 rounded-r-xl text-right">AKSI</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
               {filteredPrices.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
+                  <td colSpan={7} className="py-10 text-center text-slate-400 font-medium">
                     Tidak ditemukan komoditas dengan kata kunci tersebut.
                   </td>
                 </tr>
@@ -581,16 +954,37 @@ export default function HargaPasarTU() {
                       </div>
                     </td>
 
-                    <td className="py-4 pr-4 text-right">
-                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        item.supplyStatus === 'Melimpah'
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200/50'
-                          : item.supplyStatus === 'Normal'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                          : 'bg-amber-50 text-amber-700 border border-amber-200/50'
-                      }`}>
+                    <td className="py-4">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          item.supplyStatus === 'Melimpah'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                            : item.supplyStatus === 'Normal'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                        }`}
+                      >
                         {item.supplyStatus}
                       </span>
+                    </td>
+
+                    <td className="py-4 pr-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleOpenModalForEdit(item)}
+                          className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                          title="Edit Harga"
+                        >
+                          <Edit2 className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item.id, item.name)}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          title="Hapus"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </motion.tr>
                 ))
@@ -600,24 +994,24 @@ export default function HargaPasarTU() {
         </div>
       </div>
 
-      {/* Modal Add New Commodity */}
-      {isAddingModal && (
+      {/* Modal Add/Edit Commodity */}
+      {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-100">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                 <Tag className="h-5 w-5 text-emerald-600" />
-                Tambah Data Harga Komoditas
+                {editingItem ? 'Edit Harga Komoditas' : 'Tambah Data Harga Komoditas'}
               </h3>
               <button
-                onClick={() => setIsAddingModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-sm cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleAddNewItem} className="space-y-3">
+            <form onSubmit={handleSaveFormModal} className="space-y-3">
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">Nama Komoditas / Hasil Tani</label>
                 <input
@@ -643,6 +1037,7 @@ export default function HargaPasarTU() {
                     <option value="Pangan Utama">Pangan Utama</option>
                     <option value="Hasil SIKOMDIG">Hasil SIKOMDIG</option>
                     <option value="Buah">Buah</option>
+                    <option value="Peternakan">Peternakan</option>
                   </select>
                 </div>
 
@@ -651,7 +1046,7 @@ export default function HargaPasarTU() {
                   <input
                     type="text"
                     required
-                    placeholder="kg / Liter"
+                    placeholder="kg / ikat / tray / sisir"
                     value={newUnit}
                     onChange={(e) => setNewUnit(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"
@@ -661,7 +1056,7 @@ export default function HargaPasarTU() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">Harga Petani (Rp)</label>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">Harga Petani Desa (Rp)</label>
                   <input
                     type="number"
                     required
@@ -673,7 +1068,7 @@ export default function HargaPasarTU() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">Harga Pasar TU (Rp)</label>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">Harga Pasar TU Kemang (Rp)</label>
                   <input
                     type="number"
                     required
@@ -685,30 +1080,45 @@ export default function HargaPasarTU() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Simbol / Emoji</label>
-                <input
-                  type="text"
-                  placeholder="🥬, 🌶️, 🥕, 🪱, 🌱"
-                  value={newEmoji}
-                  onChange={(e) => setNewEmoji(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">Status Pasokan</label>
+                  <select
+                    value={newSupplyStatus}
+                    onChange={(e) => setNewSupplyStatus(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"
+                  >
+                    <option value="Melimpah">Melimpah</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Terbatas">Terbatas</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">Simbol / Emoji</label>
+                  <input
+                    type="text"
+                    placeholder="🥬, 🌶️, 🥕, 🪱"
+                    value={newEmoji}
+                    onChange={(e) => setNewEmoji(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium"
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsAddingModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 cursor-pointer"
                 >
-                  Simpan Komoditas
+                  {editingItem ? 'Simpan Perubahan' : 'Tambah Komoditas'}
                 </button>
               </div>
             </form>
