@@ -14,6 +14,7 @@ import KomposModule from './components/KomposModule';
 import CairModule from './components/CairModule';
 import MaggotModule from './components/MaggotModule';
 import JadwalCRUD from './components/JadwalCRUD';
+import HargaPasarTU from './components/HargaPasarTU';
 import PetaKomposter from './components/PetaKomposter';
 import ProfilDesa from './components/ProfilDesa';
 import Pengaturan from './components/Pengaturan';
@@ -231,6 +232,8 @@ export default function App() {
             onDeleteSchedule={handleDeleteSchedule}
           />
         );
+      case 'harga':
+        return <HargaPasarTU />;
       case 'peta':
         return (
           <PetaKomposter

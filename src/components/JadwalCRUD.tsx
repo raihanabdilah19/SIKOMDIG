@@ -129,24 +129,30 @@ export default function JadwalCRUD({
   return (
     <div className="space-y-6">
       {/* Top action header & stats */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-green-600" />
-            Jadwal Pengambilan Pupuk & Pakan BSF
-          </h1>
-          <p className="text-xs text-slate-500 font-medium">
-            Kelola pencatatan subsidi penyaluran pupuk padat, cair, dan maggot pakan ternak warga
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-green-50 text-green-600 rounded-xl border border-green-100">
+              <Calendar className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">
+                Jadwal Pengambilan Pupuk & Pakan BSF
+              </h1>
+              <p className="text-xs text-slate-500 font-medium">
+                Kelola pencatatan distribusi pupuk organik padat, cair, dan maggot pakan ternak warga
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={() => {
               setWaSchedule(null);
               setIsWAModalOpen(true);
             }}
-            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/10 cursor-pointer"
+            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 active:scale-[0.98] cursor-pointer"
           >
             <MessageSquare className="h-4 w-4" />
             <span>Kirim Notif WA Warga</span>
@@ -154,7 +160,7 @@ export default function JadwalCRUD({
 
           <button
             onClick={handleOpenAddForm}
-            className="px-4 py-2.5 bg-green-600 text-white font-bold text-xs rounded-xl hover:bg-green-700 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-green-600/10 cursor-pointer"
+            className="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-green-600/20 active:scale-[0.98] cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             <span>Buat Jadwal Baru</span>
@@ -163,72 +169,94 @@ export default function JadwalCRUD({
       </div>
 
       {/* Stats row widget */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
-          <span className="text-[9px] font-bold text-slate-400 block uppercase tracking-wider">TOTAL AGENDA</span>
-          <span className="text-xl md:text-2xl font-black text-slate-800 font-mono block mt-1">{totalCount}</span>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">TOTAL AGENDA</span>
+            <span className="text-2xl font-black text-slate-800 font-mono block mt-0.5">{totalCount}</span>
+          </div>
+          <div className="h-10 w-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center border border-slate-100">
+            <Calendar className="h-5 w-5" />
+          </div>
         </div>
-        <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-4">
-          <span className="text-[9px] font-bold text-amber-500 block uppercase tracking-wider">MENUNGGU (PENDING)</span>
-          <span className="text-xl md:text-2xl font-black text-amber-600 font-mono block mt-1">{pendingCount}</span>
+
+        <div className="bg-amber-50/40 border border-amber-100/80 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold text-amber-600 block uppercase tracking-wider">MENUNGGU (PENDING)</span>
+            <span className="text-2xl font-black text-amber-700 font-mono block mt-0.5">{pendingCount}</span>
+          </div>
+          <div className="h-10 w-10 bg-amber-100/60 text-amber-600 rounded-xl flex items-center justify-center">
+            <Clock className="h-5 w-5" />
+          </div>
         </div>
-        <div className="bg-green-50/50 border border-green-100 rounded-2xl p-4">
-          <span className="text-[9px] font-bold text-green-500 block uppercase tracking-wider">TELAH DIANTAR/DIAMBIL</span>
-          <span className="text-xl md:text-2xl font-black text-green-600 font-mono block mt-1">{completedCount}</span>
+
+        <div className="bg-emerald-50/40 border border-emerald-100/80 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold text-emerald-600 block uppercase tracking-wider">TELAH DIANTAR/DIAMBIL</span>
+            <span className="text-2xl font-black text-emerald-700 font-mono block mt-0.5">{completedCount}</span>
+          </div>
+          <div className="h-10 w-10 bg-emerald-100/60 text-emerald-600 rounded-xl flex items-center justify-center">
+            <CheckCircle2 className="h-5 w-5" />
+          </div>
         </div>
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        
-        {/* Search bar */}
-        <div className="relative flex-1 max-w-md">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-            <Search className="h-4 w-4" />
+      <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs space-y-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Search bar */}
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <Search className="h-4 w-4" />
+            </div>
+            <input
+              type="text"
+              placeholder="Cari nama pengambil, catatan kelompok tani..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 text-slate-800 placeholder-slate-400 transition-all"
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Cari nama pengambil, catatan kelompok tani..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 focus:border-green-500 text-slate-800 placeholder-slate-400"
-          />
-        </div>
 
-        {/* Filters bar */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          {/* Status Select Filter */}
-          <div className="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-            <span className="text-[10px] text-slate-400 font-bold uppercase pl-1">Status:</span>
+          {/* Status Filter */}
+          <div className="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-100 shrink-0">
+            <span className="text-[10px] text-slate-400 font-bold uppercase pl-1.5 pr-1">Status:</span>
             {['All', 'Pending', 'Selesai'].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st as any)}
-                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   statusFilter === st
                     ? 'bg-green-600 text-white shadow-xs'
-                    : 'text-slate-500 hover:bg-slate-200'
+                    : 'text-slate-600 hover:bg-slate-200/60'
                 }`}
               >
                 {st === 'All' ? 'Semua' : st}
               </button>
             ))}
           </div>
+        </div>
 
-          {/* Fertilizer Type Filter */}
-          <div className="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-            <span className="text-[10px] text-slate-400 font-bold uppercase pl-1">Pupuk:</span>
-            {['All', 'Kompos Kering', 'Pupuk Organik Cair (POC)', 'Maggot BSF'].map((ft) => (
+        {/* Fertilizer Type Filter Tabs */}
+        <div className="pt-2 border-t border-slate-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0">Jenis Komoditas:</span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {[
+              { id: 'All', label: 'Semua Komoditas' },
+              { id: 'Kompos Kering', label: '🌱 Kompos Kering' },
+              { id: 'Pupuk Organik Cair (POC)', label: '💧 Pupuk POC' },
+              { id: 'Maggot BSF', label: '🪱 Pakan Maggot BSF' }
+            ].map((ft) => (
               <button
-                key={ft}
-                onClick={() => setFertilizerFilter(ft as any)}
-                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all truncate max-w-[120px] cursor-pointer ${
-                  fertilizerFilter === ft
-                    ? 'bg-green-600 text-white shadow-xs'
-                    : 'text-slate-500 hover:bg-slate-200'
+                key={ft.id}
+                onClick={() => setFertilizerFilter(ft.id as any)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                  fertilizerFilter === ft.id
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'
                 }`}
               >
-                {ft === 'All' ? 'Semua' : ft.replace(' (POC)', '')}
+                {ft.label}
               </button>
             ))}
           </div>
@@ -243,7 +271,7 @@ export default function JadwalCRUD({
               <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider bg-slate-50/50">
                 <th className="py-4 pl-6">ID AGENDA</th>
                 <th className="py-4">NAMA PENGAMBIL</th>
-                <th className="py-4">JENIS PUPUK</th>
+                <th className="py-4">JENIS PUPUK / PAKAN</th>
                 <th className="py-4">JUMLAH</th>
                 <th className="py-4">TANGGAL AMBIL</th>
                 <th className="py-4">STATUS</th>
@@ -268,13 +296,16 @@ export default function JadwalCRUD({
                       </div>
                     </td>
                     <td className="py-4">
-                      <span className={`inline-flex items-center gap-1 font-bold px-2 py-0.5 rounded-md ${
+                      <span className={`inline-flex items-center gap-1 font-bold px-2.5 py-1 rounded-lg text-xs ${
                         item.fertilizerType === 'Kompos Kering'
-                          ? 'bg-green-50 text-green-700 border border-green-100/30'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                           : item.fertilizerType === 'Pupuk Organik Cair (POC)'
-                          ? 'bg-sky-50 text-sky-700 border border-sky-100/30'
-                          : 'bg-rose-50 text-rose-700 border border-rose-100/30'
+                          ? 'bg-sky-50 text-sky-700 border border-sky-200/60'
+                          : 'bg-amber-50 text-amber-800 border border-amber-200/60'
                       }`}>
+                        {item.fertilizerType === 'Kompos Kering' && '🌱 '}
+                        {item.fertilizerType === 'Pupuk Organik Cair (POC)' && '💧 '}
+                        {item.fertilizerType === 'Maggot BSF' && '🪱 '}
                         {item.fertilizerType}
                       </span>
                     </td>
@@ -408,15 +439,19 @@ export default function JadwalCRUD({
                       value={formType}
                       onChange={(e) => setFormType(e.target.value as any)}
                     >
-                      <option value="Kompos Kering">Kompos Kering (Kg)</option>
-                      <option value="Pupuk Organik Cair (POC)">Pupuk Organik Cair / POC (L)</option>
-                      <option value="Maggot BSF">Maggot BSF (Kg)</option>
+                      <option value="Kompos Kering">🌱 Kompos Kering (Kg)</option>
+                      <option value="Pupuk Organik Cair (POC)">💧 Pupuk Organik Cair / POC (Liter)</option>
+                      <option value="Maggot BSF">🪱 Pakan Maggot BSF (Kg)</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                      Jumlah Sesuai Satuan (Kg/L)
+                      {formType === 'Pupuk Organik Cair (POC)'
+                        ? 'Jumlah (Liter)'
+                        : formType === 'Maggot BSF'
+                        ? 'Jumlah Pakan Maggot BSF (Kg)'
+                        : 'Jumlah Kompos Kering (Kg)'}
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -426,7 +461,7 @@ export default function JadwalCRUD({
                         type="number"
                         required
                         min="1"
-                        placeholder="Contoh: 50"
+                        placeholder="Contoh: 10"
                         value={formAmount}
                         onChange={(e) => setFormAmount(Number(e.target.value))}
                         className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800 placeholder-slate-400"

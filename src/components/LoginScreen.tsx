@@ -145,8 +145,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             </h2>
             <p className="text-gray-400 text-sm mt-1">
               {isLogin 
-                ? 'Masukkan kredensial Anda untuk masuk ke sistem' 
-                : 'Mulai kolaborasi dalam pengelolaan komposter pintar'}
+                ? 'Masukkan kredensial Anda untuk masuk ke sistem. Jika sudah pernah mendaftar di HP lain, langsung gunakan username & password Anda.' 
+                : 'Pendaftaran akun baru SIKOMDIG. Jika sudah pernah daftar di HP/perangkat lain, tidak perlu daftar lagi — cukup masuk via menu Masuk.'}
             </p>
           </div>
 
@@ -277,7 +277,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               {isLogin ? (
                 <span>Belum punya akun? Daftar gratis di sini</span>
               ) : (
-                <span>Sudah punya akun? Masuk di sini</span>
+                <span>Sudah pernah daftar di HP/perangkat lain? Klik di sini untuk Masuk</span>
               )}
             </button>
           </div>

@@ -9,8 +9,7 @@ import {
   Bug,
   ShieldCheck,
   ArrowRight,
-  Sparkles,
-  Award
+  Sparkles
 } from 'lucide-react';
 
 interface EdukasiProps {
@@ -80,7 +79,7 @@ export default function Edukasi({ setActiveTab }: EdukasiProps) {
           </div>
           <h3 className="text-xl font-bold text-slate-800 mb-3">Manfaat Nyata Pengolahan Kompos</h3>
           <p className="text-xs text-slate-500 leading-relaxed mb-6">
-            Dengan mengolah sampah secara digital (SIKOMDIG), bahan organik tersebut dikonversi secara higienis menjadi humus kompos bernutrisi makro dan mikro tinggi. Tanah sawah kembali subur alami tanpa tergantung pupuk kimia sintetis yang mahal.
+            Melalui pengelolaan sampah secara terpadu dan berkelanjutan, bahan organik tersebut dikonversi secara higienis menjadi humus kompos bernutrisi makro dan mikro tinggi. Tanah sawah kembali subur alami tanpa tergantung pupuk kimia sintetis yang mahal.
           </p>
           <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
             <li className="flex items-start gap-2.5">
@@ -99,12 +98,12 @@ export default function Edukasi({ setActiveTab }: EdukasiProps) {
         </motion.div>
       </div>
 
-      {/* How SIKOMDIG Works Timeline */}
+      {/* How Composting Works Timeline */}
       <div className="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-xs space-y-6">
         <div className="text-center space-y-1 max-w-md mx-auto">
-          <h3 className="text-xl font-extrabold text-slate-800">Bagaimana SIKOMDIG Bekerja?</h3>
+          <h3 className="text-xl font-extrabold text-slate-800">Bagaimana Pengolahan Kompos Bekerja?</h3>
           <p className="text-xs text-slate-500 font-medium leading-relaxed">
-            Sistem terintegrasi yang mendigitalisasi pemantauan pengolahan pupuk desa
+            Sistem terintegrasi untuk pemantauan dan pengelolaan pupuk desa
           </p>
         </div>
 
@@ -118,12 +117,12 @@ export default function Edukasi({ setActiveTab }: EdukasiProps) {
             {
               step: '02',
               title: 'Pengolahan Komposter',
-              desc: 'Limbah dimasukkan ke bak komposter digital berukuran besar di titik RW masing-masing.'
+              desc: 'Limbah dimasukkan ke bak komposter terpadu berukuran besar di titik RW masing-masing.'
             },
             {
               step: '03',
               title: 'Monitoring IoT / Digital',
-              desc: 'Suhu, pH, dan kelembaban dipantau di portal SIKOMDIG guna menjamin kematangan sempurna.'
+              desc: 'Suhu, pH, dan kelembaban dipantau melalui sistem monitoring guna menjamin kematangan sempurna.'
             },
             {
               step: '04',
@@ -145,7 +144,7 @@ export default function Edukasi({ setActiveTab }: EdukasiProps) {
       {/* Interactive Products Showcase & CTA */}
       <div className="space-y-6">
         <div className="text-center space-y-1">
-          <h3 className="text-xl font-extrabold text-slate-800">Hasil Nyata Karya SIKOMDIG</h3>
+          <h3 className="text-xl font-extrabold text-slate-800">Hasil Nyata Pengolahan Sampah</h3>
           <p className="text-xs text-slate-500 font-medium">Tiga komoditas bernilai guna tinggi hasil olahan limbah desa</p>
         </div>
 
@@ -210,30 +209,6 @@ export default function Edukasi({ setActiveTab }: EdukasiProps) {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Interactive Impact / Success Story */}
-      <div className="bg-gradient-to-tr from-green-800 to-emerald-700 rounded-3xl p-6 md:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-500/15 via-transparent to-transparent opacity-50" />
-        
-        <div className="space-y-2 relative z-10">
-          <div className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-green-300" />
-            <span className="text-[10px] font-bold tracking-widest text-green-200 uppercase">DAMPAK NYATA LINGKUNGAN</span>
-          </div>
-          <h3 className="text-2xl font-black tracking-tight">Sudah 4,3 Ton Sampah Organik Terselamatkan!</h3>
-          <p className="text-xs text-green-50/90 leading-relaxed max-w-xl font-light">
-            Sejak diluncurkan pada tahun 2026, SIKOMDIG telah mendampingi puluhan rukun tetangga mengelola komposter dengan rapi. Lingkungan bersih bebas bau, petani mandiri berkat pupuk gratis berkualitas tinggi!
-          </p>
-        </div>
-
-        <button
-          onClick={() => setActiveTab('jadwal')}
-          className="px-6 py-3 bg-white text-green-700 hover:bg-green-55 rounded-2xl text-xs font-bold transition-all relative z-10 shrink-0 flex items-center gap-2 shadow-xl shadow-green-950/20 active:scale-[0.98] cursor-pointer"
-        >
-          <span>Jadwalkan Pengambilan Pupuk</span>
-          <ArrowRight className="h-4 w-4 text-green-700" />
-        </button>
       </div>
     </div>
   );

@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   ArrowRight,
   Leaf,
+  Store,
   MessageSquare,
   Send
 } from 'lucide-react';
@@ -48,19 +49,7 @@ export default function Dashboard({
   setActiveTab
 }: DashboardProps) {
   const [dateTime, setDateTime] = useState(new Date());
-  const [isEditingStats, setIsEditingStats] = useState(false);
   const [isWAModalOpen, setIsWAModalOpen] = useState(false);
-  const [tempStats, setTempStats] = useState<FoodSecurityStats>({ ...foodSecurity });
-  const [tempComposters, setTempComposters] = useState<Composter[]>(composters);
-
-  // Sync temperature stats with prop changes
-  useEffect(() => {
-    setTempStats({ ...foodSecurity });
-  }, [foodSecurity]);
-
-  useEffect(() => {
-    setTempComposters(composters);
-  }, [composters]);
 
   // Clock ticks
   useEffect(() => {
@@ -92,38 +81,7 @@ export default function Dashboard({
   };
 
   // Calculate statistics
-  const activeCompostersCount = composters.filter((c) => c.status === 'Aktif').length;
-  const fullCompostersCount = composters.filter((c) => c.status === 'Penuh').length;
   const pendingSchedules = schedules.filter((s) => s.status === 'Pending').length;
-
-  const handleSaveStats = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFoodSecurity(tempStats);
-    if (onUpdateComposters) {
-      onUpdateComposters(tempComposters);
-    } else if (onUpdateComposter) {
-      tempComposters.forEach((c) => onUpdateComposter(c));
-    }
-    setIsEditingStats(false);
-  };
-
-  const handleComposterStatusChange = (id: string, newStatus: Composter['status']) => {
-    setTempComposters((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
-    );
-  };
-
-  const handleComposterWeightChange = (id: string, weight: number) => {
-    setTempComposters((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, currentWeight: weight } : c))
-    );
-  };
-
-  const handleComposterTempChange = (id: string, temp: number) => {
-    setTempComposters((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, temperature: temp } : c))
-    );
-  };
 
   return (
     <div className="space-y-6">
@@ -224,335 +182,11 @@ export default function Dashboard({
         </motion.div>
       </div>
 
-      {/* Key Metrics Grid & Header */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-500">
-              METRIK REKOMPOSING & STOK
-            </span>
-            <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-              Dapat Diedit Live
-            </span>
-          </div>
-          <button
-            onClick={() => setIsEditingStats(!isEditingStats)}
-            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
-          >
-            <FileEdit className="h-3.5 w-3.5" />
-            <span>{isEditingStats ? 'Tutup Form Edit' : '✏️ Edit Data & Siklus'}</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              title: 'Pengolahan Sampah',
-              value: `${foodSecurity.wasteProcessed.toLocaleString('id-ID')} kg`,
-              subtitle: 'Total limbah terolah',
-              icon: Leaf,
-              colorClass: 'bg-emerald-50 text-emerald-600 border-emerald-100/50',
-              anim: { scale: 1.02 }
-            },
-            {
-              title: 'Stok Kompos Kering',
-              value: `${foodSecurity.compostStock.toLocaleString('id-ID')} kg`,
-              subtitle: 'Pupuk siap distribusikan',
-              icon: Sprout,
-              colorClass: 'bg-green-50 text-green-600 border-green-100/50',
-              anim: { scale: 1.02 }
-            },
-            {
-              title: 'Stok Pupuk Cair',
-              value: `${foodSecurity.fertilizerStock.toLocaleString('id-ID')} Liter`,
-              subtitle: 'POC fermentasi matang',
-              icon: Droplet,
-              colorClass: 'bg-sky-50 text-sky-600 border-sky-100/50',
-              anim: { scale: 1.02 }
-            },
-            {
-              title: 'Siklus Komposter',
-              value: `${activeCompostersCount} / ${composters.length}`,
-              subtitle: `${fullCompostersCount} bak terisi penuh`,
-              icon: ShieldCheck,
-              colorClass: 'bg-amber-50 text-amber-600 border-amber-100/50',
-              anim: { scale: 1.02 }
-            }
-          ].map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={idx}
-                whileHover={stat.anim}
-                onClick={() => setIsEditingStats(true)}
-                className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 flex flex-col justify-between shadow-xs transition-all hover:shadow-md cursor-pointer group"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-slate-400 truncate group-hover:text-emerald-600 transition-colors">
-                    {stat.title}
-                  </span>
-                  <div className={`p-2 rounded-xl border ${stat.colorClass} shrink-0`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <div className="text-lg md:text-2xl font-black text-slate-800 tracking-tight">
-                    {stat.value}
-                  </div>
-                  <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 truncate">
-                    {stat.subtitle}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Main Content Sections */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         
         {/* Left Column: Products Showcase & Stats */}
         <div className="xl:col-span-8 space-y-6">
-          
-          {/* Food Security Interactive Stats Panel */}
-          <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xs relative">
-            <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
-              <div className="space-y-0.5">
-                <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-green-600" />
-                  Pilar Ketahanan Pangan Desa Cibunian
-                </h3>
-                <p className="text-xs text-slate-500 font-medium">
-                  Integrasi logistik bahan pangan, pupuk hasil komposting, dan pakan budidaya BSF
-                </p>
-              </div>
-              
-              <button
-                onClick={() => {
-                  if (isEditingStats) {
-                    setIsEditingStats(false);
-                    setTempStats({ ...foodSecurity });
-                  } else {
-                    setIsEditingStats(true);
-                  }
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                  isEditingStats
-                    ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    : 'bg-green-50 text-green-600 border border-green-100 hover:bg-green-100'
-                }`}
-              >
-                <FileEdit className="h-3.5 w-3.5" />
-                <span>{isEditingStats ? 'Batal' : 'Edit Stok'}</span>
-              </button>
-            </div>
-
-            {isEditingStats ? (
-              <form onSubmit={handleSaveStats} className="space-y-6">
-                <div>
-                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider mb-3">
-                    1. Update Data Pengolahan & Stok Hasil (Kg / Liter)
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                        ♻️ Pengolahan Sampah / Limbah Terolah (Kg)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800"
-                        value={tempStats.wasteProcessed}
-                        onChange={(e) => setTempStats({ ...tempStats, wasteProcessed: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                        🌱 Stok Kompos Kering Siap Pakai (Kg)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800"
-                        value={tempStats.compostStock}
-                        onChange={(e) => setTempStats({ ...tempStats, compostStock: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                        💧 Stok Pupuk Organik Cair / POC (Liter)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800"
-                        value={tempStats.fertilizerStock}
-                        onChange={(e) => setTempStats({ ...tempStats, fertilizerStock: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                        🪱 Pakan Maggot BSF Kering (Kg)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800"
-                        value={tempStats.maggotStock}
-                        onChange={(e) => setTempStats({ ...tempStats, maggotStock: Number(e.target.value) })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1.5">
-                        🌾 Cadangan Beras / Lumbung Pangan (Kg)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="0"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/10 text-slate-800"
-                        value={tempStats.riceStock}
-                        onChange={(e) => setTempStats({ ...tempStats, riceStock: Number(e.target.value) })}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <div className="mb-3">
-                    <h4 className="text-xs font-black text-slate-700 uppercase tracking-wider">
-                      2. Update Siklus Kompos & Status Bak Komposter RW
-                    </h4>
-                    <p className="text-[11px] text-slate-400 font-medium">
-                      Atur siklus keberadaan bak komposter (Aktif = Siap Diisi, Penuh = Dalam Proses Fermentasi, Perbaikan = Maintenance)
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {tempComposters.map((c) => (
-                      <div
-                        key={c.id}
-                        className="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-slate-800">{c.code}</span>
-                          <span className="text-[10px] text-slate-500 font-bold">{c.rtRw}</span>
-                        </div>
-                        <p className="text-[10px] text-slate-400 font-medium truncate">{c.location}</p>
-
-                        <div className="space-y-1.5 pt-1">
-                          <div>
-                            <label className="block text-[10px] font-bold text-slate-500">Status Siklus</label>
-                            <select
-                              value={c.status}
-                              onChange={(e) => handleComposterStatusChange(c.id, e.target.value as any)}
-                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none"
-                            >
-                              <option value="Aktif">🟢 Aktif (Siap Diisi)</option>
-                              <option value="Penuh">🟡 Penuh (Fermentasi)</option>
-                              <option value="Perbaikan">🔴 Perbaikan (Maintenance)</option>
-                            </select>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="block text-[10px] font-bold text-slate-500">Suhu (°C)</label>
-                              <input
-                                type="number"
-                                value={c.temperature}
-                                onChange={(e) => handleComposterTempChange(c.id, Number(e.target.value))}
-                                className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-[10px] font-bold text-slate-500">Isi (Kg)</label>
-                              <input
-                                type="number"
-                                value={c.currentWeight}
-                                onChange={(e) => handleComposterWeightChange(c.id, Number(e.target.value))}
-                                className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditingStats(false);
-                      setTempStats({ ...foodSecurity });
-                      setTempComposters(composters);
-                    }}
-                    className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-200 transition-colors cursor-pointer"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/10 cursor-pointer"
-                  >
-                    Simpan Semua Data & Siklus
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                  {
-                    name: 'Cadangan Pangan (Padi/Beras)',
-                    value: `${foodSecurity.riceStock} kg`,
-                    color: 'text-green-600 bg-green-50 border-green-100/50',
-                    desc: 'Cadangan lumbung desa'
-                  },
-                  {
-                    name: 'Stok Kompos Kering',
-                    value: `${foodSecurity.compostStock} kg`,
-                    color: 'text-amber-700 bg-amber-50 border-amber-100/50',
-                    desc: 'Siap sebar ke petani'
-                  },
-                  {
-                    name: 'Stok Pupuk Cair POC',
-                    value: `${foodSecurity.fertilizerStock} L`,
-                    color: 'text-sky-600 bg-sky-50 border-sky-100/50',
-                    desc: 'Suplemen nutrisi tanah'
-                  },
-                  {
-                    name: 'Pakan Maggot BSF',
-                    value: `${foodSecurity.maggotStock} kg`,
-                    color: 'text-rose-600 bg-rose-50 border-rose-100/50',
-                    desc: 'Protein alternatif ternak'
-                  }
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 bg-slate-50/50 border border-slate-100 rounded-2xl flex flex-col justify-between"
-                  >
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
-                        {item.name}
-                      </span>
-                      <span className="text-xl font-black text-slate-800 block">
-                        {item.value}
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-medium mt-3 block">
-                      {item.desc}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Interactive Products Grid (Click to view full module) */}
           <div className="space-y-4">
@@ -689,6 +323,30 @@ export default function Dashboard({
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Market Prices Quick Banner */}
+          <div className="bg-gradient-to-r from-emerald-900 to-teal-900 border border-emerald-800 rounded-3xl p-5 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-400/30 text-emerald-300 shrink-0">
+                <Store className="h-6 w-6" />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider block">PASAR INDUK TU BOGOR</span>
+                <h4 className="text-sm font-extrabold text-white">Acuan Harga Jual Hasil Tani & Komoditas</h4>
+                <p className="text-xs text-emerald-100/80 mt-0.5">
+                  Pantau harga cabai, bawang, beras, dan hasil tani unggulan terkini.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setActiveTab('harga')}
+              className="px-4 py-2 bg-white text-emerald-950 hover:bg-emerald-50 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-md cursor-pointer active:scale-95"
+            >
+              <span>Cek Daftar Harga</span>
+              <ArrowRight className="h-3.5 w-3.5 text-emerald-700" />
+            </button>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import {
   Droplet,
   Bug,
   CalendarDays,
+  TrendingUp,
   MapPin,
   Home,
   Settings,
@@ -48,6 +49,7 @@ export default function Sidebar({
     { id: 'cair', label: 'Modul Pupuk Cair (POC)', icon: Droplet },
     { id: 'maggot', label: 'Budidaya Maggot BSF', icon: Bug },
     { id: 'jadwal', label: 'Penjadwalan Pupuk', icon: CalendarDays },
+    { id: 'harga', label: 'Harga Hasil Tani Pasar TU', icon: TrendingUp },
     { id: 'peta', label: 'Peta Komposter Desa', icon: MapPin },
     { id: 'profil', label: 'Profil Desa Cibunian', icon: Home },
     { id: 'settings', label: 'Pengaturan', icon: Settings }

@@ -283,15 +283,15 @@ _Terima Kasih - Pemdes Cibunian_`
             {category === 'jadwal' && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Jenis Pupuk</label>
+                  <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">Jenis Pupuk / Pakan</label>
                   <select
                     value={pupukType}
                     onChange={(e) => setPupukType(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white"
                   >
-                    <option value="Kompos Kering">Kompos Kering</option>
-                    <option value="Pupuk Organik Cair (POC)">Pupuk Organik Cair (POC)</option>
-                    <option value="Maggot BSF">Maggot BSF</option>
+                    <option value="Kompos Kering">🌱 Kompos Kering</option>
+                    <option value="Pupuk Organik Cair (POC)">💧 Pupuk Organik Cair (POC)</option>
+                    <option value="Maggot BSF">🪱 Pakan Maggot BSF</option>
                   </select>
                 </div>
                 <div>

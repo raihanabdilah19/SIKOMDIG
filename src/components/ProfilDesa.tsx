@@ -94,7 +94,7 @@ export default function ProfilDesa({ theme }: ProfilDesaProps) {
     },
     {
       id: 'sekdes',
-      name: 'Hafidz Nurdiansyah S.Pd',
+      name: 'Deden Ariawan',
       role: 'Sekretaris Desa',
       email: 'sekretaris@cibunian.desa.id',
       phone: '0858-XXXX-XXXX',
@@ -175,7 +175,7 @@ export default function ProfilDesa({ theme }: ProfilDesaProps) {
     },
     {
       id: 'kadus_1',
-      name: 'Deden Ariawan',
+      name: 'Hafidz Nurdiansyah S.Pd',
       role: 'Kepala Dusun I',
       email: 'kadus1@cibunian.desa.id',
       phone: '0812-XXXX-XXXX',
