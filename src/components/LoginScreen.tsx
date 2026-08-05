@@ -29,10 +29,15 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     const existingUsersRaw = localStorage.getItem('sikomdig_users');
     let users = existingUsersRaw ? JSON.parse(existingUsersRaw) : [];
 
-    // Fallback default admin if no users exist
+    // Fallback default admin if no users exist or update legacy admin name
     if (users.length === 0) {
-      const defaultAdmin = { username: 'admin', name: 'Raihan Abdilah', password: 'admin' };
+      const defaultAdmin = { username: 'admin', name: 'Pengelola SIKOMDIG', password: 'admin' };
       users.push(defaultAdmin);
+      localStorage.setItem('sikomdig_users', JSON.stringify(users));
+    } else {
+      users = users.map((u: any) =>
+        u.name === 'Raihan Abdilah' ? { ...u, name: 'Pengelola SIKOMDIG' } : u
+      );
       localStorage.setItem('sikomdig_users', JSON.stringify(users));
     }
 
@@ -183,7 +188,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Raihan Abdilah"
+                    placeholder="Contoh: Pengelola SIKOMDIG / Budi Santoso"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-[#131318] border border-white/10 rounded-2xl text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"

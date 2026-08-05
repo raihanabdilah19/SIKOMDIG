@@ -35,7 +35,7 @@ export default function App() {
     wasteProcessed: 0
   });
   const [settings, setSettings] = useState<AppSettings>({
-    adminName: 'Raihan Abdilah',
+    adminName: 'Pengelola SIKOMDIG',
     notificationsEnabled: true,
     systemSoundEnabled: true,
     selectedTheme: 'dark',
@@ -53,7 +53,16 @@ export default function App() {
     // 1. Session check
     const savedSession = localStorage.getItem('sikomdig_session');
     if (savedSession) {
-      setCurrentUser(JSON.parse(savedSession));
+      try {
+        const parsedUser = JSON.parse(savedSession);
+        if (parsedUser && (parsedUser.name === 'Raihan Abdilah' || !parsedUser.name)) {
+          parsedUser.name = 'Pengelola SIKOMDIG';
+          localStorage.setItem('sikomdig_session', JSON.stringify(parsedUser));
+        }
+        setCurrentUser(parsedUser);
+      } catch {
+        // ignore parse error
+      }
     }
 
     // 2. Load schedules

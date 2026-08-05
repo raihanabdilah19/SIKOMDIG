@@ -102,7 +102,7 @@ export default function Dashboard({
               Portal SIKOMDIG • Desa Cibunian
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold mt-4 tracking-tight">
-              {getGreeting()}, <span className="text-green-200">{user.name}</span>
+              Pusat Pemantauan SIKOMDIG
             </h2>
             <p className="text-sm text-green-50/90 mt-2 max-w-xl font-light leading-relaxed">
               Selamat datang di pusat pemantauan pupuk organik dan pengolahan limbah ramah lingkungan. Mari bersama wujudkan kedaulatan pangan dan kelestarian pertanian Desa Cibunian!
