@@ -31,12 +31,12 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
     // Fallback default admin if no users exist or update legacy admin name
     if (users.length === 0) {
-      const defaultAdmin = { username: 'admin', name: 'Pengelola SIKOMDIG', password: 'admin' };
+      const defaultAdmin = { username: 'admin', name: 'Pengelola SIRAM', password: 'admin' };
       users.push(defaultAdmin);
       localStorage.setItem('sikomdig_users', JSON.stringify(users));
     } else {
       users = users.map((u: any) =>
-        u.name === 'Raihan Abdilah' ? { ...u, name: 'Pengelola SIKOMDIG' } : u
+        (u.name === 'Raihan Abdilah' || u.name === 'Pengelola SIKOMDIG') ? { ...u, name: 'Pengelola SIRAM' } : u
       );
       localStorage.setItem('sikomdig_users', JSON.stringify(users));
     }
@@ -110,11 +110,11 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               <div className="p-2.5 bg-indigo-600/20 backdrop-blur-md rounded-2xl border border-indigo-500/30">
                 <Leaf className="h-6 w-6 text-indigo-400 animate-pulse" />
               </div>
-              <span className="font-bold tracking-wider text-xs uppercase text-indigo-300">SIKOMDIG DESA</span>
+              <span className="font-bold tracking-wider text-xs uppercase text-indigo-300">SIRAM DESA</span>
             </div>
             
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-indigo-200">
-              Portal Komposter Digital Desa Cibunian
+              Portal SIRAM Desa Cibunian
             </h1>
             <p className="text-slate-300 text-sm md:text-base leading-relaxed font-light">
               Inovasi pengelolaan sampah organik, monitoring pupuk berkualitas, dan ketahanan pangan lestari berbasis pemberdayaan masyarakat.
@@ -151,7 +151,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             <p className="text-gray-400 text-sm mt-1">
               {isLogin 
                 ? 'Masukkan kredensial Anda untuk masuk ke sistem. Jika sudah pernah mendaftar di HP lain, langsung gunakan username & password Anda.' 
-                : 'Pendaftaran akun baru SIKOMDIG. Jika sudah pernah daftar di HP/perangkat lain, tidak perlu daftar lagi — cukup masuk via menu Masuk.'}
+                : 'Pendaftaran akun baru SIRAM. Jika sudah pernah daftar di HP/perangkat lain, tidak perlu daftar lagi — cukup masuk via menu Masuk.'}
             </p>
           </div>
 
@@ -188,7 +188,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Pengelola SIKOMDIG / Budi Santoso"
+                    placeholder="Contoh: Pengelola SIRAM / Budi Santoso"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-[#131318] border border-white/10 rounded-2xl text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"

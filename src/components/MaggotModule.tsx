@@ -837,7 +837,7 @@ export default function MaggotModule() {
                 </div>
                 <div className="md:col-span-4 bg-white dark:bg-zinc-900 border border-rose-100/50 dark:border-rose-900/30 p-4 rounded-xl space-y-2">
                   <span className="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider block">
-                    💡 REKOMENDASI TIM SIKOMDIG
+                    💡 REKOMENDASI TIM SIRAM
                   </span>
                   <p className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium leading-relaxed">
                     {cyclePhases[activePhase - 1].tips}

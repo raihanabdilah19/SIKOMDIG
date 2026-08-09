@@ -97,7 +97,7 @@ export default function Pengaturan({ settings, onUpdateSettings, onResetDatabase
       <div>
         <h1 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
           <Settings className="h-6 w-6 text-green-600 animate-spin-slow" />
-          Pengaturan Aplikasi SIKOMDIG
+          Pengaturan Aplikasi SIRAM
         </h1>
         <p className="text-xs text-slate-500 font-medium">
           Konfigurasi preferensi sistem monitoring, preferensi visual, dan utilitas pengaturan database portal desa
@@ -294,7 +294,7 @@ export default function Pengaturan({ settings, onUpdateSettings, onResetDatabase
 
           <div className="pt-2 text-[11px] text-slate-300 space-y-1 border-t border-slate-800 leading-relaxed">
             <p>
-              💡 **Fitur Notifikasi WA SIKOMDIG**:
+              💡 **Fitur Notifikasi WA SIRAM**:
             </p>
             <ul className="list-disc list-inside space-y-0.5 text-slate-400 text-[10px]">
               <li>Langsung membuka WhatsApp Web / Aplikasi WA di HP warga dengan pesan terformat resmi.</li>
@@ -332,7 +332,7 @@ export default function Pengaturan({ settings, onUpdateSettings, onResetDatabase
             <span>Continuous Cloud Deployment Active</span>
           </div>
           <p className="text-slate-300">
-            Aplikasi SIKOMDIG Desa Cibunian ini di-host secara langsung melalui Cloud Infrastructure. Setiap kali ada penambahan fitur atau modifikasi data, sistem secara **otomatis membangun ulang (auto-build & auto-deploy)** aplikasi tanpa memerlukan hosting manual ulang atau perubahan URL link shared app.
+            Aplikasi SIRAM Desa Cibunian ini di-host secara langsung melalui Cloud Infrastructure. Setiap kali ada penambahan fitur atau modifikasi data, sistem secara **otomatis membangun ulang (auto-build & auto-deploy)** aplikasi tanpa memerlukan hosting manual ulang atau perubahan URL link shared app.
           </p>
           <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-slate-400 border-t border-slate-800">
             <span className="bg-slate-800 px-2 py-1 rounded">URL Live: Shared App Ready</span>
@@ -362,7 +362,7 @@ export default function Pengaturan({ settings, onUpdateSettings, onResetDatabase
           onClick={() => setIsResetModalOpen(true)}
           className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-rose-600/10 cursor-pointer"
         >
-          Reset Semua Data SIKOMDIG
+          Reset Semua Data SIRAM
         </button>
       </div>
 

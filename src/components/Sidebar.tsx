@@ -9,6 +9,7 @@ import {
   CalendarDays,
   TrendingUp,
   MapPin,
+  Trophy,
   Home,
   Settings,
   LogOut,
@@ -44,6 +45,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard Utama', icon: LayoutDashboard },
+    { id: 'poin', label: 'Poin & Papan Peringkat', icon: Trophy },
     { id: 'edukasi', label: 'Edukasi Sampah', icon: GraduationCap },
     { id: 'kompos', label: 'Modul Pupuk Kompos', icon: Sprout },
     { id: 'cair', label: 'Modul Pupuk Cair (POC)', icon: Droplet },
@@ -54,6 +56,7 @@ export default function Sidebar({
     { id: 'profil', label: 'Profil Desa Cibunian', icon: Home },
     { id: 'settings', label: 'Pengaturan', icon: Settings }
   ];
+
 
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
@@ -76,7 +79,7 @@ export default function Sidebar({
                 exit={{ opacity: 0, width: 0 }}
                 className="whitespace-nowrap"
               >
-                <h1 className="font-extrabold text-sm tracking-widest text-green-400">SIKOMDIG</h1>
+                <h1 className="font-extrabold text-sm tracking-widest text-green-400">SIRAM</h1>
                 <p className="text-[10px] text-slate-400 font-medium">Desa Cibunian</p>
                 <div className="flex items-center gap-1 mt-1">
                   <span className="relative flex h-2 w-2">

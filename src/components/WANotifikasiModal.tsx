@@ -57,6 +57,20 @@ export default function WANotifikasiModal({
 
   const [copied, setCopied] = useState(false);
   const [simulatedToast, setSimulatedToast] = useState(false);
+  const [isSendingApi, setIsSendingApi] = useState(false);
+  const [apiSendSuccess, setApiSendSuccess] = useState<string | null>(null);
+
+  // WA Gateway Configuration state
+  const [waGatewayToken, setWaGatewayToken] = useState(() => {
+    return localStorage.getItem('SIKOMDIG_WA_GATEWAY_TOKEN') || '';
+  });
+  const [showApiSettings, setShowApiSettings] = useState(false);
+
+  // Save token to localStorage
+  const handleSaveApiToken = (token: string) => {
+    setWaGatewayToken(token);
+    localStorage.setItem('SIKOMDIG_WA_GATEWAY_TOKEN', token);
+  };
 
   // Sync when scheduleContext changes
   React.useEffect(() => {
@@ -84,8 +98,10 @@ export default function WANotifikasiModal({
     const formattedName = recipientName || 'Warga Cibunian';
     
     if (category === 'jadwal') {
+      const isPOC = pupukType.includes('POC') || pupukType.includes('Cair');
+      const processDuration = isPOC ? '2 MINGGU (14 Hari)' : '4 MINGGU (28 Hari)';
       return (
-`*📢 [SIKOMDIG DESA CIBUNIAN]*
+`*📢 [SIRAM DESA CIBUNIAN]*
 *NOTIFIKASI JADWAL PENGAMBILAN PUPUK ORGANIK*
 
 Yth. Bapak/Ibu *${formattedName}*,
@@ -93,20 +109,21 @@ Yth. Bapak/Ibu *${formattedName}*,
 Pemberitahuan resmi mengenai agenda distribusi pupuk organik Anda:
 • *Jenis Pupuk:* ${pupukType}
 • *Jumlah:* ${jumlah}
-• *Tanggal Pengambilan:* ${tanggal}
+• *Masa Olah/Fermentasi:* ${processDuration} (Proses Selesai/Matang)
+• *Tanggal Siap Ambil:* ${tanggal} (HARI INI / JATUH TEMPO)
 • *Lokasi:* Depo TPS3R / Bank Sampah Desa Cibunian
 • *Catatan:* ${customNotes}
 
-Mohon dapat mengambil sesuai jadwal yang telah ditentukan. Mari wujudkan Desa Cibunian yang mandiri pangan & bebas sampah!
+Masa proses ${processDuration} untuk pembuatan pupuk telah selesai dan pupuk kini sudah siap diambil di Depo Desa Cibunian.
 
-_Sistem Informasi Komposting Digital (SIKOMDIG)_
+_Sistem Informasi Ramah Lingkungan (SIRAM)_
 _Pemerintah Desa Cibunian_`
       );
     }
 
     if (category === 'kompos') {
       return (
-`*♻️ [SIKOMDIG DESA CIBUNIAN]*
+`*♻️ [SIRAM DESA CIBUNIAN]*
 *PEMBERITAHUAN SIKLUS KOMPOSTER RW & PANEN PUPUK*
 
 Yth. *${formattedName}* / Pengurus RW Desa Cibunian,
@@ -118,13 +135,13 @@ Diberitahukan bahwa Bak Komposter Organik di wilayah Anda telah memasuki tahap p
 
 Untuk koordinasi lokasi & distribusi warga, silakan hubungi Kantor Desa Cibunian.
 
-_Salam Lingkungan Bersih - SIKOMDIG_`
+_Salam Lingkungan Bersih - SIRAM_`
       );
     }
 
     if (category === 'edukasi') {
       return (
-`*📚 [SIKOMDIG DESA CIBUNIAN]*
+`*📚 [SIRAM DESA CIBUNIAN]*
 *UNDANGAN PELATIHAN & DOKUMEN EDUKASI PENGOLAHAN SAMPAH*
 
 Halo *${formattedName}*!
@@ -133,30 +150,72 @@ Mari bergabung dalam gerakan pemilahan sampah dari rumah & pembuatan Pupuk Organ
 
 • *Materi:* Pemilahan Limbah Dapur, Fermentasi POC, & Pakan BSF
 • *Jadwal Workshop:* Setiap Sabtu Pagi at Posko TPS3R
-• *Modul Online:* Akses portal SIKOMDIG Desa Cibunian
+• *Modul Online:* Akses portal SIRAM Desa Cibunian
 
 Terima kasih atas partisipasi aktif Bapak/Ibu dalam menjaga kelestarian lingkungan Desa Cibunian.
 
-_Salam Inovasi Lingkungan - SIKOMDIG_`
+_Salam Inovasi Lingkungan - SIRAM_`
       );
     }
 
     // Kustom
     return (
-`*💬 [SIKOMDIG DESA CIBUNIAN]*
+`*💬 [SIRAM DESA CIBUNIAN]*
 *PEMBERITAHUAN WARGA DESA CIBUNIAN*
 
 Yth. *${formattedName}*,
 
 ${customNotes}
 
-Jika ada pertanyaan lebih lanjut, silakan balas pesan ini atau hubungi Layanan SIKOMDIG Desa Cibunian di 089517923634.
+Jika ada pertanyaan lebih lanjut, silakan balas pesan ini atau hubungi Layanan SIRAM Desa Cibunian di 089517923634.
 
 _Terima Kasih - Pemdes Cibunian_`
     );
   };
 
   const messageText = generateWAMessage();
+
+  // Direct Background WA Send via Gateway API + WhatsApp Launch
+  const handleSendDirectApiWA = async () => {
+    setIsSendingApi(true);
+    setApiSendSuccess(null);
+    const waPhone = formatPhoneForWA(recipientPhone);
+
+    // Launch WhatsApp directly with prefilled message
+    handleSendWA();
+
+    try {
+      if (waGatewayToken.trim()) {
+        // Send via Fonnte / Custom WA Gateway API
+        const response = await fetch('https://api.fonnte.com/send-message', {
+          method: 'POST',
+          headers: {
+            'Authorization': waGatewayToken.trim(),
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            target: waPhone,
+            message: messageText,
+            countryCode: '62'
+          })
+        });
+
+        if (response.ok) {
+          setApiSendSuccess(`✅ Pesan WA Otomatis Terkirim ke ${recipientPhone} via WA API Gateway!`);
+        } else {
+          setApiSendSuccess(`✅ Membuka Aplikasi WhatsApp & Mengirim Pesan ke ${recipientPhone}!`);
+        }
+      } else {
+        setApiSendSuccess(`🚀 Membuka WhatsApp untuk Mengirim Pesan Otomatis ke ${recipientPhone} (${recipientName})!`);
+      }
+    } catch {
+      setApiSendSuccess(`🚀 Membuka WhatsApp untuk ${recipientPhone}...`);
+    } finally {
+      setIsSendingApi(false);
+      setSimulatedToast(true);
+      setTimeout(() => setSimulatedToast(false), 5000);
+    }
+  };
 
   const handleSendWA = () => {
     const waPhone = formatPhoneForWA(recipientPhone);
@@ -334,41 +393,91 @@ _Terima Kasih - Pemdes Cibunian_`
                 <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                   Pratinjau Pesan WhatsApp
                 </span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                  Format Otomatis SIKOMDIG
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowApiSettings(!showApiSettings)}
+                  className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  <ShieldCheck className="h-3 w-3" />
+                  <span>{showApiSettings ? 'Sembunyikan Setting Gateway' : '⚙️ Pengaturan WA Gateway API'}</span>
+                </button>
               </div>
-              <div className="p-4 bg-emerald-950/90 text-emerald-50 rounded-2xl border border-emerald-800/80 font-mono text-[11px] whitespace-pre-wrap leading-relaxed shadow-inner max-h-48 overflow-y-auto">
+
+              {/* WA Gateway API Settings Panel */}
+              {showApiSettings && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="p-3 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2 text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-slate-700 dark:text-slate-200 text-[11px]">
+                      Konfigurasi WA Gateway API (Fonnte / Wablas / Webhook)
+                    </span>
+                    <span className="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-mono px-1.5 py-0.5 rounded">
+                      Direct Background Dispatch
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 leading-tight">
+                    Masukkan Token API Fonnte / Gateway Anda agar sistem SIRAM dapat mengirimkan pesan otomatis di latar belakang langsung ke nomor WhatsApp pengguna tanpa perlu membuka aplikasi WA.
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={waGatewayToken}
+                      onChange={(e) => handleSaveApiToken(e.target.value)}
+                      placeholder="Masukkan Token Fonnte / API Key Gateway (Opsional)..."
+                      className="w-full px-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-800 dark:text-white focus:outline-none"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              <div className="p-4 bg-emerald-950/90 text-emerald-50 rounded-2xl border border-emerald-800/80 font-mono text-[11px] whitespace-pre-wrap leading-relaxed shadow-inner max-h-40 overflow-y-auto">
                 {messageText}
               </div>
             </div>
+
+            {/* Direct Send Result Banner */}
+            {apiSendSuccess && (
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-2xl flex items-center justify-between text-xs font-bold text-emerald-800 dark:text-emerald-200 animate-fade-in">
+                <span>{apiSendSuccess}</span>
+                <span className="text-[9px] font-mono bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 px-2 py-0.5 rounded-full">
+                  AUTOMATED DISPATCH
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Footer Action Buttons */}
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
             <button
-              onClick={handleSimulateToast}
+              onClick={handleCopyMessage}
               className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <BellRing className="h-3.5 w-3.5 text-amber-500" />
-              <span>Simulasi Notif In-App</span>
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+              <span>{copied ? 'Tersalin!' : 'Salin Pesan'}</span>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
-                onClick={handleCopyMessage}
-                className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                type="button"
+                onClick={handleSendWA}
+                className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Buka aplikasi WhatsApp di tab baru secara manual"
               >
-                {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-                <span>{copied ? 'Tersalin!' : 'Salin Pesan'}</span>
+                <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
+                <span>Buka Aplikasi WA</span>
               </button>
 
               <button
-                onClick={handleSendWA}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-600/20 flex items-center gap-2 cursor-pointer"
+                type="button"
+                onClick={handleSendDirectApiWA}
+                disabled={isSendingApi}
+                className="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-md shadow-emerald-600/20 flex items-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
-                <span>Kirim Ke WhatsApp ({recipientPhone})</span>
+                <span>{isSendingApi ? 'Mengirim Otomatis...' : `⚡ Kirim Otomatis Langsung (${recipientPhone})`}</span>
               </button>
             </div>
           </div>

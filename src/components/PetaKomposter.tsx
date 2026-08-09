@@ -24,7 +24,8 @@ import {
   Map as MapIcon,
   Crosshair,
   Route,
-  Clock
+  Clock,
+  Trash2
 } from 'lucide-react';
 import { Composter } from '../types';
 
@@ -32,12 +33,13 @@ interface PetaKomposterProps {
   composters: Composter[];
   onAddComposter: (composter: Composter) => void;
   onUpdateComposter: (composter: Composter) => void;
+  onDeleteComposter?: (id: string) => void;
 }
 
 // Center of Desa Cibunian, Kecamatan Pamijahan, Kabupaten Bogor
 const CIBUNIAN_CENTER = { lat: -6.6812, lng: 106.6668 };
 
-export default function PetaKomposter({ composters, onAddComposter, onUpdateComposter }: PetaKomposterProps) {
+export default function PetaKomposter({ composters, onAddComposter, onUpdateComposter, onDeleteComposter }: PetaKomposterProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('semua');
   const [selectedId, setSelectedId] = useState<string | null>(composters[0]?.id || null);
@@ -117,7 +119,7 @@ export default function PetaKomposter({ composters, onAddComposter, onUpdateComp
 
     L.tileLayer(tileUrl, {
       maxZoom: 20,
-      attribution: '&copy; <a href="https://maps.google.com">Google Maps</a> | SIKOMDIG Cibunian',
+      attribution: '&copy; <a href="https://maps.google.com">Google Maps</a> | SIRAM Cibunian',
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     }).addTo(map);
 
@@ -679,44 +681,74 @@ export default function PetaKomposter({ composters, onAddComposter, onUpdateComp
             </div>
 
             <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
-              {filteredComposters.map((c) => {
-                const isSelected = selectedId === c.id;
-                return (
-                  <div
-                    key={c.id}
-                    onClick={() => handleCenterOnNode(c)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer group ${
-                      isSelected
-                        ? 'bg-slate-900 text-white border-slate-950 shadow-md'
-                        : 'bg-slate-50 border-slate-100 text-slate-700 hover:bg-slate-100/70'
-                    }`}
-                  >
-                    <div className="space-y-0.5 truncate pr-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-extrabold">{c.code}</span>
-                        <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${
-                          isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-                        }`}>
-                          {c.temperature}°C
+              {filteredComposters.length === 0 ? (
+                <div className="py-6 px-4 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-2">
+                  <MapPin className="h-6 w-6 text-emerald-500 mx-auto opacity-70" />
+                  <p className="text-xs font-bold text-slate-700">
+                    Belum Ada Komposter
+                  </p>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Klik 'Tambah Titik Komposter' di atas atau klik lokasi pada peta untuk mendaftarkan lokasi baru.
+                  </p>
+                </div>
+              ) : (
+                filteredComposters.map((c) => {
+                  const isSelected = selectedId === c.id;
+                  return (
+                    <div
+                      key={c.id}
+                      onClick={() => handleCenterOnNode(c)}
+                      className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer group ${
+                        isSelected
+                          ? 'bg-slate-900 text-white border-slate-950 shadow-md'
+                          : 'bg-slate-50 border-slate-100 text-slate-700 hover:bg-slate-100/70'
+                      }`}
+                    >
+                      <div className="space-y-0.5 truncate pr-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-extrabold">{c.code}</span>
+                          <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${
+                            isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                          }`}>
+                            {c.temperature}°C
+                          </span>
+                        </div>
+                        <span className={`text-[10px] block truncate ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                          {c.location}
                         </span>
                       </div>
-                      <span className={`text-[10px] block truncate ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
-                        {c.location}
-                      </span>
-                    </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`inline-block h-2.5 w-2.5 rounded-full ${
-                        c.status === 'Aktif'
-                          ? 'bg-emerald-500'
-                          : c.status === 'Penuh'
-                          ? 'bg-amber-500'
-                          : 'bg-rose-500'
-                      }`} />
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`inline-block h-2.5 w-2.5 rounded-full ${
+                          c.status === 'Aktif'
+                            ? 'bg-emerald-500'
+                            : c.status === 'Penuh'
+                            ? 'bg-amber-500'
+                            : 'bg-rose-500'
+                        }`} />
+                        {onDeleteComposter && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm(`Hapus titik komposter ${c.code}?`)) {
+                                onDeleteComposter(c.id);
+                                if (selectedId === c.id) setSelectedId(null);
+                              }
+                            }}
+                            className={`p-1 rounded-lg transition-colors ${
+                              isSelected ? 'text-slate-400 hover:text-rose-300 hover:bg-white/10' : 'text-slate-400 hover:text-rose-600 hover:bg-slate-200'
+                            }`}
+                            title="Hapus Titik"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -904,19 +936,48 @@ export default function PetaKomposter({ composters, onAddComposter, onUpdateComp
                     )}
                   </div>
 
-                  <button
-                    onClick={handleOpenEdit}
-                    className="flex items-center justify-center gap-1.5 w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-100 transition-colors cursor-pointer"
-                  >
-                    <Settings className="h-4 w-4 text-slate-400" />
-                    <span>Konfigurasi Sensor (Simulasi)</span>
-                  </button>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={handleOpenEdit}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-100 transition-colors cursor-pointer"
+                    >
+                      <Settings className="h-4 w-4 text-slate-400" />
+                      <span>Konfigurasi Sensor</span>
+                    </button>
+                    {onDeleteComposter && (
+                      <button
+                        onClick={() => {
+                          if (confirm(`Hapus titik komposter ${selectedComposter.code}?`)) {
+                            onDeleteComposter(selectedComposter.id);
+                            setSelectedId(null);
+                          }
+                        }}
+                        className="px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl border border-rose-200 transition-colors cursor-pointer flex items-center gap-1"
+                        title="Hapus Titik Komposter"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span>Hapus</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="bg-white border border-slate-100 rounded-3xl p-10 text-center text-slate-400">
-              Pilih komposter di peta untuk melihat telemetry data.
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 text-center space-y-3 shadow-xs">
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl w-fit mx-auto border border-emerald-100">
+                <MapIcon className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-xs font-extrabold text-slate-800">
+                  {composters.length === 0 ? 'Pemetaan Komposter Masih Kosong' : 'Pilih Titik Komposter'}
+                </h4>
+                <p className="text-[11px] text-slate-400 max-w-xs mx-auto leading-relaxed">
+                  {composters.length === 0
+                    ? 'Belum ada lokasi bak komposter yang terdaftar. Klik "Tambah Titik Komposter" di atas untuk mendaftarkan lokasi bak komposter warga Desa Cibunian.'
+                    : 'Klik salah satu titik komposter pada peta untuk melihat detail data sensor live.'}
+                </p>
+              </div>
             </div>
           )}
         </div>

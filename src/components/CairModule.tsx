@@ -1033,7 +1033,7 @@ export default function CairModule() {
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold">
             <Droplet className="h-4 w-4 animate-pulse text-emerald-500" />
-            <span>SIKOMDIG Cibunian</span>
+            <span>SIRAM Cibunian</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
             🧪 MODUL LENGKAP PUPUK CAIR
@@ -1091,7 +1091,7 @@ export default function CairModule() {
 
       {/* Module Footer Footer */}
       <div className="text-center py-6 text-[10px] md:text-xs text-slate-400 dark:text-slate-500 font-bold tracking-widest uppercase">
-        SIKOMDIG - Desa Cibunian ♻️ | Modul Edukasi Pupuk Cair
+        SIRAM - Desa Cibunian ♻️ | Modul Edukasi Pupuk Cair
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ export interface Schedule {
   id: string;
   name: string;
   fertilizerType: 'Kompos Kering' | 'Pupuk Organik Cair (POC)' | 'Maggot BSF';
-  date: string;
+  date: string; // Tanggal Siap Ambil / Panen
+  startDate?: string; // Tanggal Mulai Proses
   amount: number; // in kg or liters
   status: 'Pending' | 'Selesai' | 'Dibatalkan';
   notes?: string;
@@ -45,3 +46,36 @@ export interface FoodSecurityStats {
   maggotStock: number; // in kg
   wasteProcessed: number; // in kg
 }
+
+export interface EcoPointLog {
+  id: string;
+  userName: string;
+  userRtRw: string;
+  activityType: 'Setor Sampah Dapur' | 'Olah Kompos Kering' | 'Produksi POC' | 'Pakan Maggot BSF' | 'Perawatan Bak Komposter';
+  weightKg: number;
+  pointsEarned: number;
+  timestamp: string;
+  notes?: string;
+}
+
+export interface EcoPointUser {
+  id: string;
+  name: string;
+  rtRw: string;
+  totalPoints: number;
+  totalWasteProcessedKg: number;
+  badge: 'Pejuang Pemula' | 'Pahlawan Hijau' | 'Maestro Organik' | 'Pahlawan Cibunian';
+  lastActivity: string;
+  avatarEmoji?: string;
+}
+
+export interface EcoRewardItem {
+  id: string;
+  title: string;
+  category: 'Pupuk & Bibit' | 'Hasil Tani' | 'Voucher / Diskon' | 'Alat Pertanian' | 'Kebutuhan Tani';
+  pointsRequired: number;
+  stock: number;
+  description: string;
+  iconEmoji: string;
+}
+

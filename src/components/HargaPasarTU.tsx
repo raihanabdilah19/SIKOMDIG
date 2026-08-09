@@ -26,7 +26,7 @@ import {
 export interface MarketPriceItem {
   id: string;
   name: string;
-  category: 'Sayuran' | 'Bumbu & Rempah' | 'Pangan Utama' | 'Hasil SIKOMDIG' | 'Buah' | 'Peternakan';
+  category: 'Sayuran' | 'Bumbu & Rempah' | 'Pangan Utama' | 'Hasil SIRAM' | 'Buah' | 'Peternakan';
   priceTu: number; // Harga di Pasar Induk TU Kemang (Perumda Pasar Pakuan Jaya)
   priceFarmgate: number; // Harga di Tingkat Petani Desa Cibunian
   unit: string; // kg, Liter, Ikat, Tray
@@ -328,7 +328,7 @@ export const pakuanJayaOfficialPrices: MarketPriceItem[] = [
   {
     id: 'PKJ-023',
     name: 'Maggot BSF Kering High Protein',
-    category: 'Hasil SIKOMDIG',
+    category: 'Hasil SIRAM',
     priceTu: 48000,
     priceFarmgate: 42000,
     unit: 'kg',
@@ -495,8 +495,7 @@ export default function HargaPasarTU() {
   };
 
   const handleResetToOfficialData = () => {
-    if (window.confirm('Reset data harga ke indeks resmi Perumda Pasar Pakuan Jaya Kota Bogor?')) {
-      const nowStr =
+    const nowStr =
         new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) +
         ', ' +
         new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) +
@@ -509,10 +508,9 @@ export default function HargaPasarTU() {
 
       savePrices(resetData);
       setLastSyncTime(nowStr);
-    }
   };
 
-  const categories = ['Semua', 'Sayuran', 'Bumbu & Rempah', 'Pangan Utama', 'Hasil SIKOMDIG', 'Buah', 'Peternakan'];
+  const categories = ['Semua', 'Sayuran', 'Bumbu & Rempah', 'Pangan Utama', 'Hasil SIRAM', 'Buah', 'Peternakan'];
 
   const filteredPrices = prices.filter((item) => {
     const matchesCategory = selectedCategory === 'Semua' || item.category === selectedCategory;
@@ -552,10 +550,8 @@ export default function HargaPasarTU() {
   };
 
   const handleDeleteItem = (id: string, name: string) => {
-    if (window.confirm(`Hapus ${name} dari daftar harga?`)) {
-      const updated = prices.filter((p) => p.id !== id);
-      savePrices(updated);
-    }
+    const updated = prices.filter((p) => p.id !== id);
+    savePrices(updated);
   };
 
   const handleSaveFormModal = (e: React.FormEvent) => {
@@ -628,7 +624,7 @@ export default function HargaPasarTU() {
       msg += `   • Status: ${p.changeStatus === 'naik' ? '📈 Naik' : p.changeStatus === 'turun' ? '📉 Turun' : '⚖️ Stabil'}\n\n`;
     });
 
-    msg += `_Portal SIKOMDIG Desa Cibunian - Akses Realtime Informasi Pasar Induk_`;
+    msg += `_Portal SIRAM Desa Cibunian - Akses Realtime Informasi Pasar Induk_`;
 
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
   };
@@ -636,35 +632,35 @@ export default function HargaPasarTU() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-5 sm:p-7 text-white shadow-xl relative overflow-hidden border border-emerald-800/50">
         <div className="absolute right-0 top-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
           <div className="space-y-2 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold">
-                <Building2 className="h-3.5 w-3.5" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] sm:text-xs font-bold">
+                <Building2 className="h-3.5 w-3.5 shrink-0" />
                 <span>Perumda Pasar Pakuan Jaya Kota Bogor</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-[11px] font-semibold">
-                <Store className="h-3 w-3 text-emerald-400" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-[10px] sm:text-[11px] font-semibold">
+                <Store className="h-3 w-3 text-emerald-400 shrink-0" />
                 <span>Pasar Induk TU Kemang</span>
               </span>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white leading-tight">
               Daftar Harga Jual Hasil Tani Terupdate
             </h1>
-            <p className="text-xs md:text-sm text-emerald-100/90 leading-relaxed font-normal">
-              Indeks resmi harga komoditas pertanian, bahan pokok, dan hasil panen kebun Desa Cibunian disinkronkan langsung dengan Pasar Induk Teknik Utama (TU) Kemang Kota Bogor.
+            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal">
+              Indeks resmi komoditas pertanian, bahan pokok, dan hasil panen kebun Desa Cibunian disinkronkan langsung dengan Pasar Induk Teknik Utama (TU) Kemang Kota Bogor.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 shrink-0 pt-2 lg:pt-0 border-t border-emerald-800/60 lg:border-t-0">
             <button
               onClick={handleSyncPrices}
               disabled={isSyncing}
-              className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl border border-emerald-500/30 transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 disabled:opacity-70"
+              className="col-span-1 px-3.5 py-2.5 bg-emerald-800/90 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl border border-emerald-600/40 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-95 disabled:opacity-70"
             >
               <RefreshCw className={`h-4 w-4 text-emerald-300 ${isSyncing ? 'animate-spin' : ''}`} />
               <span>{isSyncing ? 'Memperbarui...' : 'Sync Pasar TU'}</span>
@@ -672,7 +668,7 @@ export default function HargaPasarTU() {
 
             <button
               onClick={handleShareWA}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/30 cursor-pointer active:scale-95"
+              className="col-span-1 px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 cursor-pointer active:scale-95"
             >
               <Share2 className="h-4 w-4" />
               <span>Bagikan WA</span>
@@ -680,7 +676,7 @@ export default function HargaPasarTU() {
 
             <button
               onClick={handleOpenModalForAdd}
-              className="px-4 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 font-bold text-xs rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-95"
+              className="col-span-2 sm:col-span-1 px-4 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 font-extrabold text-xs rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/10 cursor-pointer active:scale-95"
             >
               <Plus className="h-4 w-4 text-emerald-700" />
               <span>Tambah Komoditas</span>
@@ -690,34 +686,34 @@ export default function HargaPasarTU() {
       </div>
 
       {/* Real-time Status & Sync Bar */}
-      <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center shrink-0">
             <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black text-slate-800">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs font-black text-slate-800 dark:text-slate-100">
                 Update Realtime Perumda Pasar Pakuan Jaya
               </span>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+              <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                 Aktif Auto-Sync
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">
-              Terakhir diperbarui: <span className="font-bold text-slate-600">{lastSyncTime}</span>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+              Terakhir diperbarui: <span className="font-bold text-slate-600 dark:text-slate-300">{lastSyncTime}</span>
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
-          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+          <label className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={autoUpdateEnabled}
               onChange={(e) => setAutoUpdateEnabled(e.target.checked)}
-              className="rounded text-emerald-600 focus:ring-emerald-500"
+              className="rounded text-emerald-600 focus:ring-emerald-500 h-4 w-4"
             />
             <span>Auto-Refresh (25s)</span>
           </label>
@@ -725,76 +721,76 @@ export default function HargaPasarTU() {
           <button
             onClick={handleResetToOfficialData}
             title="Reset ke Data Standar Resmi Pasar Pakuan Jaya"
-            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <RotateCcw className="h-3.5 w-3.5 text-slate-500" />
-            <span>Reset Data Resmi</span>
+            <span>Reset Data</span>
           </button>
         </div>
       </div>
 
       {/* Top Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL KOMODITAS PASAR</span>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">TOTAL KOMODITAS PASAR</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-2xl font-black text-slate-800 font-mono">{prices.length}</span>
-            <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Lengkap</span>
+            <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 font-mono">{prices.length}</span>
+            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">Lengkap</span>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TREN KOMODITAS UTAMA</span>
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">TREN UTAMA</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-sm font-black text-emerald-600 font-mono flex items-center gap-1">
-              <TrendingUp className="h-4 w-4" /> Cabe & Maggot Naik
+            <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1">
+              <TrendingUp className="h-3.5 w-3.5 shrink-0" /> Cabe & Maggot Naik
             </span>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">PASAR ACUAN</span>
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">PASAR ACUAN</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-xs font-bold text-slate-800 truncate">Pasar Induk TU Kemang</span>
-            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Bogor</span>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Pasar Induk TU Kemang</span>
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded-md">Bogor</span>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">SELISIH HARGA PETANI</span>
+        <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">SELISIH HARGA PETANI</span>
           <div className="flex items-center justify-between mt-1">
-            <span className="text-xs font-bold text-slate-700">Rata-rata ~15%</span>
-            <span className="text-[10px] font-bold text-emerald-600">Margi Aman</span>
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Rata-rata ~15%</span>
+            <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400">Margin Aman</span>
           </div>
         </div>
       </div>
 
       {/* Calculator Widget: Potensi Hasil Panen */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 text-white shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+            <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/30 shrink-0">
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold text-white">Kalkulator Potensi Omzet Hasil Panen</h3>
-              <p className="text-xs text-slate-400">Simulasi pendataan nilai jual berdasarkan indeks Perumda Pasar Pakuan Jaya</p>
+              <h3 className="text-sm sm:text-base font-extrabold text-white">Kalkulator Potensi Omzet Panen</h3>
+              <p className="text-[11px] text-slate-400">Simulasi pendataan nilai jual berdasarkan indeks Perumda Pasar Pakuan Jaya</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs">
+          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-2xl border border-slate-700 text-xs self-start sm:self-auto">
             <button
               onClick={() => setUseFarmgate(true)}
-              className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                useFarmgate ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                useFarmgate ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
               }`}
             >
               Harga Petani
             </button>
             <button
               onClick={() => setUseFarmgate(false)}
-              className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
-                !useFarmgate ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                !useFarmgate ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
               }`}
             >
               Grosir Pasar TU
@@ -802,13 +798,13 @@ export default function HargaPasarTU() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           <div>
             <label className="block text-xs font-bold text-slate-300 mb-1.5">Pilih Komoditas Panen</label>
             <select
               value={calcSelectedId}
               onChange={(e) => setCalcSelectedId(e.target.value)}
-              className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+              className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-2xl text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
             >
               {prices.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -827,18 +823,18 @@ export default function HargaPasarTU() {
               min="1"
               value={calcQuantity}
               onChange={(e) => setCalcQuantity(Number(e.target.value))}
-              className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-mono font-bold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+              className="w-full px-3.5 py-2.5 bg-slate-800 border border-slate-700 rounded-2xl text-xs font-mono font-bold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
               placeholder="Masukkan jumlah..."
             />
           </div>
 
-          <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 flex flex-col justify-center">
+          <div className="bg-slate-950/70 border border-slate-800 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-center">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ESTIMASI OMZET BERSIH</span>
-            <span className="text-2xl font-black text-emerald-400 font-mono mt-0.5">
+            <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono mt-0.5">
               {formatRupiah(netRevenue)}
             </span>
             {!useFarmgate && (
-              <span className="text-[10px] text-slate-400 mt-1">
+              <span className="text-[10px] text-slate-400 mt-0.5">
                 *Sudah dikurangi estimasi ongkos armada ke Pasar TU Bogor (~8%)
               </span>
             )}
@@ -846,34 +842,34 @@ export default function HargaPasarTU() {
         </div>
       </div>
 
-      {/* Main Table Section */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xs space-y-4">
+      {/* Main Commodity Prices List Section */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-xs space-y-4">
         {/* Controls Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3.5">
           {/* Search bar */}
           <div className="relative flex-1 max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
               <Search className="h-4 w-4" />
             </div>
             <input
               type="text"
-              placeholder="Cari komoditas (cabe, bawang, beras, maggot, ayam, telur...)..."
+              placeholder="Cari komoditas (cabe, bawang, beras, maggot, ayam...)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-800 placeholder-slate-400"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
             />
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          {/* Category Tabs (Scrollable on Mobile) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none max-w-full">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
                   selectedCategory === cat
                     ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
-                    : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
                 }`}
               >
                 {cat}
@@ -882,11 +878,124 @@ export default function HargaPasarTU() {
           </div>
         </div>
 
-        {/* Price Cards Grid / Table */}
-        <div className="overflow-x-auto">
+        {/* 1. MOBILE-FRIENDLY CARD GRID (Visible on screens < md) */}
+        <div className="block md:hidden space-y-3">
+          {filteredPrices.length === 0 ? (
+            <div className="py-12 text-center text-slate-400 font-medium bg-slate-50 dark:bg-slate-800/40 rounded-2xl">
+              Tidak ditemukan komoditas dengan kata kunci tersebut.
+            </div>
+          ) : (
+            filteredPrices.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-slate-50/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-750 rounded-2xl p-3.5 space-y-3 relative overflow-hidden"
+              >
+                {/* Header: Icon, Name, Category */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-2xl p-2 bg-white dark:bg-slate-800 rounded-xl shadow-2xs border border-slate-100 dark:border-slate-700 shrink-0">
+                      {item.iconEmoji}
+                    </span>
+                    <div>
+                      <h4 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm leading-tight">
+                        {item.name}
+                      </h4>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold border border-slate-200/50 dark:border-slate-700">
+                          {item.category}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono font-semibold">
+                          / {item.unit}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 shrink-0 bg-white dark:bg-slate-800 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700">
+                    <button
+                      onClick={() => handleOpenModalForEdit(item)}
+                      className="p-1.5 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteItem(item.id, item.name)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors"
+                      title="Hapus"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Price Grid (Farmgate vs Pasar TU) */}
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">
+                      Harga Petani Desa
+                    </span>
+                    <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-100 block mt-0.5">
+                      {formatRupiah(item.priceFarmgate)}
+                    </span>
+                  </div>
+
+                  <div className="bg-emerald-50/80 dark:bg-emerald-950/50 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/60">
+                    <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase block">
+                      Pasar TU Bogor
+                    </span>
+                    <span className="text-xs font-black font-mono text-emerald-700 dark:text-emerald-400 block mt-0.5">
+                      {formatRupiah(item.priceTu)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Footer Badges: Perubahan & Pasokan */}
+                <div className="flex items-center justify-between pt-1 border-t border-slate-200/50 dark:border-slate-750 text-[11px]">
+                  <div className="flex items-center gap-1">
+                    {item.changeStatus === 'naik' ? (
+                      <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-extrabold bg-emerald-100/80 dark:bg-emerald-950/80 px-2 py-0.5 rounded-lg text-[10px]">
+                        <TrendingUp className="h-3 w-3" />
+                        +{formatRupiah(item.changeAmount)}
+                      </span>
+                    ) : item.changeStatus === 'turun' ? (
+                      <span className="inline-flex items-center gap-1 text-rose-700 dark:text-rose-400 font-extrabold bg-rose-100/80 dark:bg-rose-950/80 px-2 py-0.5 rounded-lg text-[10px]">
+                        <TrendingDown className="h-3 w-3" />
+                        -{formatRupiah(item.changeAmount)}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-bold bg-slate-200/80 dark:bg-slate-700 px-2 py-0.5 rounded-lg text-[10px]">
+                        <Minus className="h-3 w-3 text-slate-400" />
+                        Stabil
+                      </span>
+                    )}
+                  </div>
+
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      item.supplyStatus === 'Melimpah'
+                        ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800'
+                        : item.supplyStatus === 'Normal'
+                        ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800'
+                        : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200/50 dark:border-amber-800'
+                    }`}
+                  >
+                    Stok {item.supplyStatus}
+                  </span>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
+
+        {/* 2. DESKTOP TABLE VIEW (Visible on screens >= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 text-[11px] text-slate-400 font-bold uppercase tracking-wider bg-slate-50/60">
+              <tr className="border-b border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider bg-slate-50/60 dark:bg-slate-800/40">
                 <th className="py-3.5 pl-4 rounded-l-xl">KOMODITAS PASAR</th>
                 <th className="py-3.5">KATEGORI</th>
                 <th className="py-3.5">HARGA PETANI (DESA)</th>
@@ -896,7 +1005,7 @@ export default function HargaPasarTU() {
                 <th className="py-3.5 pr-4 rounded-r-xl text-right">AKSI</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
               {filteredPrices.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-10 text-center text-slate-400 font-medium">
@@ -909,44 +1018,44 @@ export default function HargaPasarTU() {
                     key={item.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="hover:bg-slate-50/80 transition-colors"
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                   >
-                    <td className="py-4 pl-4 font-bold text-slate-800 flex items-center gap-2.5">
+                    <td className="py-4 pl-4 font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
                       <span className="text-xl">{item.iconEmoji}</span>
                       <div>
-                        <div className="font-extrabold text-slate-800 text-sm">{item.name}</div>
-                        <span className="text-[10px] text-slate-400 font-normal">Per {item.unit}</span>
+                        <div className="font-extrabold text-slate-800 dark:text-slate-100 text-sm">{item.name}</div>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Per {item.unit}</span>
                       </div>
                     </td>
 
                     <td className="py-4">
-                      <span className="inline-block px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold">
+                      <span className="inline-block px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold">
                         {item.category}
                       </span>
                     </td>
 
-                    <td className="py-4 font-mono font-bold text-slate-800">
+                    <td className="py-4 font-mono font-bold text-slate-800 dark:text-slate-200">
                       {formatRupiah(item.priceFarmgate)}
                     </td>
 
-                    <td className="py-4 font-mono font-black text-emerald-700">
+                    <td className="py-4 font-mono font-black text-emerald-700 dark:text-emerald-400">
                       {formatRupiah(item.priceTu)}
                     </td>
 
                     <td className="py-4">
                       <div className="flex items-center gap-1">
                         {item.changeStatus === 'naik' ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-md text-[11px]">
                             <TrendingUp className="h-3.5 w-3.5" />
                             +{formatRupiah(item.changeAmount)}
                           </span>
                         ) : item.changeStatus === 'turun' ? (
-                          <span className="inline-flex items-center gap-1 text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-md text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950 px-2 py-0.5 rounded-md text-[11px]">
                             <TrendingDown className="h-3.5 w-3.5" />
                             -{formatRupiah(item.changeAmount)}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-slate-500 font-semibold bg-slate-100 px-2 py-0.5 rounded-md text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400 font-semibold bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md text-[11px]">
                             <Minus className="h-3.5 w-3.5 text-slate-400" />
                             Stabil
                           </span>
@@ -958,10 +1067,10 @@ export default function HargaPasarTU() {
                       <span
                         className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           item.supplyStatus === 'Melimpah'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                            ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800'
                             : item.supplyStatus === 'Normal'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                            ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800'
+                            : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200/50 dark:border-amber-800'
                         }`}
                       >
                         {item.supplyStatus}
@@ -972,14 +1081,14 @@ export default function HargaPasarTU() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenModalForEdit(item)}
-                          className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                           title="Edit Harga"
                         >
                           <Edit2 className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteItem(item.id, item.name)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                           title="Hapus"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -1035,7 +1144,7 @@ export default function HargaPasarTU() {
                     <option value="Sayuran">Sayuran</option>
                     <option value="Bumbu & Rempah">Bumbu & Rempah</option>
                     <option value="Pangan Utama">Pangan Utama</option>
-                    <option value="Hasil SIKOMDIG">Hasil SIKOMDIG</option>
+                    <option value="Hasil SIRAM">Hasil SIRAM</option>
                     <option value="Buah">Buah</option>
                     <option value="Peternakan">Peternakan</option>
                   </select>

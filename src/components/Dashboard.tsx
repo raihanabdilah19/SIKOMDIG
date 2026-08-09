@@ -21,7 +21,9 @@ import {
   Leaf,
   Store,
   MessageSquare,
-  Send
+  Send,
+  Trophy,
+  Award
 } from 'lucide-react';
 import { User, Schedule, Composter, FoodSecurityStats } from '../types';
 import kadesBasuni from '../assets/images/input_file_6.jpg';
@@ -99,10 +101,10 @@ export default function Dashboard({
 
           <div className="relative z-10">
             <span className="text-xs font-bold uppercase tracking-wider text-green-200/90 bg-white/10 px-3 py-1 rounded-full backdrop-blur-xs">
-              Portal SIKOMDIG • Desa Cibunian
+              Portal SIRAM • Desa Cibunian
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold mt-4 tracking-tight">
-              Pusat Pemantauan SIKOMDIG
+              Pusat Pemantauan SIRAM
             </h2>
             <p className="text-sm text-green-50/90 mt-2 max-w-xl font-light leading-relaxed">
               Selamat datang di pusat pemantauan pupuk organik dan pengolahan limbah ramah lingkungan. Mari bersama wujudkan kedaulatan pangan dan kelestarian pertanian Desa Cibunian!
@@ -194,7 +196,7 @@ export default function Dashboard({
               <div>
                 <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
                   <Sprout className="h-5 w-5 text-green-600" />
-                  Modul & Produk SIKOMDIG
+                  Modul & Produk SIRAM
                 </h3>
                 <p className="text-xs text-slate-500 font-medium">
                   Klik modul di bawah untuk mempelajari cara pembuatan dan pemanfaatannya
@@ -323,6 +325,30 @@ export default function Dashboard({
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Eco Points Leaderboard Quick Banner */}
+          <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-emerald-950 border border-amber-500/30 rounded-3xl p-5 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-md">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-amber-500/20 rounded-2xl border border-amber-400/30 text-amber-300 shrink-0">
+                <Trophy className="h-6 w-6" />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">PROGRAM APRESIASI ECO-POINTS DESA</span>
+                <h4 className="text-sm font-extrabold text-white">Papan Peringkat & Poin Pengelola Sampah Organik</h4>
+                <p className="text-xs text-amber-100/80 mt-0.5">
+                  Setiap olahan sampah organik menghasilkan poin yang dapat dipantau seluruh warga & ditukar reward.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setActiveTab('poin')}
+              className="px-4 py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 text-xs font-extrabold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-md cursor-pointer active:scale-95"
+            >
+              <span>Lihat Peringkat & Klaim Poin</span>
+              <ArrowRight className="h-3.5 w-3.5 text-slate-950" />
+            </button>
           </div>
 
           {/* Market Prices Quick Banner */}
@@ -484,13 +510,13 @@ export default function Dashboard({
                   <PhoneCall className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="font-bold">WhatsApp Admin SIKOMDIG</p>
+                  <p className="font-bold">WhatsApp Admin SIRAM</p>
                   <p className="text-[10px] text-slate-400 font-mono">089517923634 (+62 895-1792-3634)</p>
                 </div>
               </a>
 
               <a
-                href="mailto:sikomdig@cibunian-bogor.desa.id"
+                href="mailto:siram@cibunian-bogor.desa.id"
                 className="flex items-center gap-3 p-3 bg-slate-800/50 hover:bg-slate-800 rounded-xl transition-colors text-slate-200"
               >
                 <div className="p-2 bg-sky-500/10 text-sky-400 rounded-lg">
@@ -498,7 +524,7 @@ export default function Dashboard({
                 </div>
                 <div>
                   <p className="font-bold">Email Portal Desa</p>
-                  <p className="text-[10px] text-slate-400 font-mono">sikomdig@cibunian.desa.id</p>
+                  <p className="text-[10px] text-slate-400 font-mono">siram@cibunian.desa.id</p>
                 </div>
               </a>
             </div>

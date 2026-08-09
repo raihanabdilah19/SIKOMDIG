@@ -317,7 +317,7 @@ export default function ProfilDesa({ theme }: ProfilDesaProps) {
     { img: cibunianRice, title: 'Keindahan Alam Sawah', desc: 'Sawah terasering subur yang melingkupi Desa Cibunian' },
     { img: cibunianFarm, title: 'Pertanian Hortikultura', desc: 'Lahan pertanian organik sayuran dan palawija mandiri' },
     { img: cibunianStream, title: 'Aliran Sungai Bersih', desc: 'Sumber air alami pegunungan yang melimpah dan murni' },
-    { img: cibunianCenter, title: 'Pusat Kompos Organik', desc: 'Pengolahan pupuk organik warga melalui program SIKOMDIG' },
+    { img: cibunianCenter, title: 'Pusat Kompos Organik', desc: 'Pengolahan pupuk organik warga melalui program SIRAM' },
     { img: cibunianGate, title: 'Gerbang Hijau Desa', desc: 'Keasrian gerbang masuk kawasan Desa Cibunian' },
     { img: cibunianCommunity, title: 'Gotong Royong Warga', desc: 'Kebersamaan warga desa dalam mewujudkan ketahanan pangan' }
   ];
@@ -327,8 +327,8 @@ export default function ProfilDesa({ theme }: ProfilDesaProps) {
       {/* Marquee Banner Ticker */}
       <div className="bg-amber-500 text-slate-900 overflow-hidden py-2.5 px-6 rounded-2xl relative border border-amber-600 flex items-center shadow-md">
         <div className="whitespace-nowrap flex gap-10 animate-[marquee_30s_linear_infinite] text-xs font-bold uppercase tracking-wider">
-          <span>📢 Selamat Datang di Website Profil Desa Cibunian • Desa Maju, Mandiri, Sejahtera dan Berwawasan Lingkungan • Bersama SIKOMDIG Kelola Sampah, Hasilkan Berkah 📢</span>
-          <span>📢 Selamat Datang di Website Profil Desa Cibunian • Desa Maju, Mandiri, Sejahtera dan Berwawasan Lingkungan • Bersama SIKOMDIG Kelola Sampah, Hasilkan Berkah 📢</span>
+          <span>📢 Selamat Datang di Website Profil Desa Cibunian • Desa Maju, Mandiri, Sejahtera dan Berwawasan Lingkungan • Bersama SIRAM Kelola Sampah, Hasilkan Berkah 📢</span>
+          <span>📢 Selamat Datang di Website Profil Desa Cibunian • Desa Maju, Mandiri, Sejahtera dan Berwawasan Lingkungan • Bersama SIRAM Kelola Sampah, Hasilkan Berkah 📢</span>
         </div>
       </div>
 
@@ -905,7 +905,7 @@ export default function ProfilDesa({ theme }: ProfilDesaProps) {
       {/* Back Button and Footer message block */}
       <div className="text-center pt-4">
         <div className="text-xs text-slate-400 font-medium italic">
-          © 2026 SIKOMDIG Desa Cibunian | Kelola Sampah, Hasilkan Berkah, Wujudkan Desa Mandiri
+          © 2026 SIRAM Desa Cibunian | Kelola Sampah, Hasilkan Berkah, Wujudkan Desa Mandiri
         </div>
       </div>
     </div>
